@@ -34,8 +34,10 @@ export default class Game extends Component {
    gameloop = (gameTime: number) =>{
       let elapsedTime = gameTime - this.previousTime;
       this.previousTime = gameTime;
-      this.gameModel.update(elapsedTime)
+      this.gameModel.processInput(elapsedTime);
+      this.gameModel.update(elapsedTime);
       this.gameModel.render();
+
 
       requestAnimationFrame(this.gameloop)
    }

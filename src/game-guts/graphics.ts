@@ -41,10 +41,14 @@ export default class Graphics {
    }
 
    public drawCircle(center: IPosition, radius:number, stroke:string, fill:string){
-      console.log(center, radius)
+      this.context.save();
       this.context.fillStyle = fill;
       this.context.strokeStyle = stroke; 
+      this.context.beginPath();
       this.context.arc(center.x, center.y, radius, 0, (2 * Math.PI));
+      this.context.closePath();
+      this.context.fill();
+      this.context.restore();
    }
 
    public drawText(text: string, position: IPosition, color: string, font = "24px arial"){
