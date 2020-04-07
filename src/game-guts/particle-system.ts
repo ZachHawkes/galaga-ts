@@ -33,15 +33,15 @@ export default class ParticleSystem {
 
    public missileThrust = (position: {x: number, y: number}, direction: number, lifetime: number, speed: IGaussian, size: IGaussian) =>{
       direction = this.random.nextGaussian(direction, 0.05);
-      for(let i = 0; i < 5; i++){
+      for(let i = 0; i < 2; i++){
          const p = new Particle({
-            position,
+            position: {x: position.x, y: position.y},
             speed: this.random.nextGaussian(speed.mean, speed.stdev),
             size: Math.abs(this.random.nextGaussian(size.mean, size.stdev)), 
-            lifetime: 1000,
+            lifetime: this.random.nextGaussian(5, 1),
             rotation: 0,
-            direction: {x: Math.cos(direction), y: Math.sin(direction)},
-            color: "rgb(244,100,100)",
+            direction: {x: Math.cos(direction + (Math.PI / 2)), y: Math.sin(direction + (Math.PI / 2))},
+            color: "rgb(225,235,59)",
          }, this.graphics)
          this.particles.push(p);
       }
@@ -81,7 +81,7 @@ class Particle {
       x: number, 
       y: number, 
    }
-   private position: {
+   public position: {
       x: number, 
       y: number, 
    }

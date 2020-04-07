@@ -68,17 +68,16 @@ class SpaceshipMissile {
    }
 
    public update = (elapsedTime: number)=> {
-      // this.particleSystem.missileThrust(this.position, 0, 1000, {mean: 5, stdev: 0.5}, {mean: 0.1, stdev: 0.05})
+      this.particleSystem.missileThrust(this.position, 0, 1000, {mean: 1, stdev: 0.5}, {mean: 0.7, stdev: 0.2})
       this.position.y -= 1024 * (elapsedTime / 1000);
    }
 
    public render(){
-      console.log("Rendering")
       if(this.position.y > 0) this.graphics.drawRect({center: this.position, size: {x:2, y:10}, rotation: 0, fill: "rgb(255,0, 0)", stroke: "rgb(255, 0, 0)"});
    }
 
    public isAlive(){
-      console.log("Is alive, ", this.position.y > 0)
+      console.log("Is alive, ", this.position.y)
       return this.position.y > 0; 
    }
 

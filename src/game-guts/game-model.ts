@@ -31,7 +31,7 @@ export default class GameModel {
    }
 
    public update(elapsedTime: number){
-      this.particleSystem.linearParticles(10, {mean: 0.5, stdev: 0.2}, {mean: 1, stdev: 0.5});
+      this.particleSystem.linearParticles(10, {mean: 0.5, stdev: 0.2}, {mean: 0.5, stdev: 0.3});
       this.spaceship.update(elapsedTime)
       this.particleSystem.update(elapsedTime);
    }
