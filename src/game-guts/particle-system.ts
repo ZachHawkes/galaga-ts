@@ -32,15 +32,30 @@ export default class ParticleSystem {
    }
 
    public missileThrust = (position: {x: number, y: number}, direction: number, lifetime: number, speed: IGaussian, size: IGaussian) =>{
-      direction = this.random.nextGaussian(direction, 0.05);
-      for(let i = 0; i < 2; i++){
+      direction = this.random.nextGaussian(direction, 0.03);
+      for(let i = 0; i < 3; i++){
          const p = new Particle({
             position: {x: position.x, y: position.y},
             speed: this.random.nextGaussian(speed.mean, speed.stdev),
             size: Math.abs(this.random.nextGaussian(size.mean, size.stdev)), 
-            lifetime: this.random.nextGaussian(5, 1),
+            lifetime: this.random.nextGaussian(500, 200),
             rotation: 0,
             direction: {x: Math.cos(direction + (Math.PI / 2)), y: Math.sin(direction + (Math.PI / 2))},
+            color: "rgb(225,235,59)",
+         }, this.graphics)
+         this.particles.push(p);
+      }
+   }
+
+   public explodeEnemy = (position: {x: number, y: number}, lifetime: number, speed: IGaussian, size: IGaussian) => {
+      for(let i = 0; i < 100; i++){
+         const p = new Particle({
+            position: {x: position.x, y: position.y},
+            speed: this.random.nextGaussian(speed.mean, speed.stdev),
+            size: Math.abs(this.random.nextGaussian(size.mean, size.stdev)), 
+            lifetime: this.random.nextGaussian(lifetime, 200),
+            rotation: 0,
+            direction: this.random.nextCircleVector(),
             color: "rgb(225,235,59)",
          }, this.graphics)
          this.particles.push(p);
@@ -117,7 +132,7 @@ class Particle {
 
    public isAlive(): boolean {
       if(this.isOutOfBounds()) return false;
-      if(!this.lifetime) return this.alive < this.lifetime;
+      if(this.lifetime) return this.alive < this.lifetime;
       return true
    }
 

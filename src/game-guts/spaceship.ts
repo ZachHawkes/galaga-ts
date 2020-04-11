@@ -9,13 +9,13 @@ interface IPosition {
 export default class Spaceship {
    private image: HTMLImageElement;
    private graphics: Graphics;
-   public position: IPosition;
-   public size: IPosition;
+   private position: IPosition;
+   private size: IPosition;
    private canvasSize: number;
    private missileArray: SpaceshipMissile[];
    private particleSystem: ParticleSystem;
 
-   constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem, canvasSize: number = 1024){
+   constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem){
       this.graphics = graphics;
       this.image = spaceshipImage;
       this.position = position;
@@ -43,6 +43,21 @@ export default class Spaceship {
       }
    }
 
+   public getCollisionInfo(){
+      return {
+         position: this.position,
+         radius: this.size.x / 2,
+      }
+   }
+
+   public receiveCollisionInfo(missilesToDestroy: number[]){
+      missilesToDestroy.forEach(missileIndex=>this.missileArray[missileIndex].destroyMissile());
+   }
+
+   public getMissileCollisionInfo(){
+      return this.missileArray.map(missile=>missile.getCollisionInfo());
+   }
+
    public moveRight = (elapsedTime: number)=>{
       if(this.position.x + (this.size.x / 2) < this.canvasSize){
          this.position.x += 300 * (elapsedTime / 1000)
@@ -60,25 +75,50 @@ class SpaceshipMissile {
    private position: IPosition;
    private graphics: Graphics; 
    private particleSystem: ParticleSystem;
+   private size: IPosition;
+   private alive: boolean; 
 
    constructor(pos: IPosition, graphics: Graphics, particleSystem: ParticleSystem){
       this.position = pos; 
       this.graphics = graphics; 
-      this.particleSystem = particleSystem; 
+      this.particleSystem = particleSystem;
+      this.size = {
+         x: 2,
+         y: 10,
+      } 
+      this.alive = true; 
+   }
+
+   public destroyMissile(){
+      this.alive = false; 
+   }
+
+   public getCollisionInfo(){
+      return {
+         pt1: {
+            x: this.position.x,
+            y: this.position.y - (this.size.y / 2),
+         },
+         pt2: {
+            x: this.position.x,
+            y: this.position.y + (this.size.y / 2),
+         }
+      }
    }
 
    public update = (elapsedTime: number)=> {
-      this.particleSystem.missileThrust(this.position, 0, 1000, {mean: 1, stdev: 0.5}, {mean: 0.7, stdev: 0.2})
+      this.particleSystem.missileThrust(this.position, 0, 1000, {mean: 1, stdev: 0.5}, {mean: 0.8, stdev: 0.3})
       this.position.y -= 1024 * (elapsedTime / 1000);
    }
 
    public render(){
-      if(this.position.y > 0) this.graphics.drawRect({center: this.position, size: {x:2, y:10}, rotation: 0, fill: "rgb(255,0, 0)", stroke: "rgb(255, 0, 0)"});
+      if(this.position.y > 0) this.graphics.drawRect({center: this.position, size: this.size, rotation: 0, fill: "rgb(255,0, 0)", stroke: "rgb(255, 0, 0)"});
    }
 
    public isAlive(){
-      console.log("Is alive, ", this.position.y)
-      return this.position.y > 0; 
+      if(!this.alive) return false; 
+      this.alive = this.position.y > 0; 
+      return this.alive;
    }
 
 }

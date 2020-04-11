@@ -3,6 +3,8 @@ import ImageHandler from "./image-handler";
 import Spaceship from "./spaceship"
 import KeyboardHandler from "./keyboard-handler";
 import ParticleSystem from "./particle-system";
+import EnemiesHandler from "./enemy-handler";
+import CollisionHandler from "./collision-handler";
 
 export default class GameModel {
    private canvas: HTMLCanvasElement;
@@ -12,6 +14,8 @@ export default class GameModel {
    private spaceship: Spaceship;
    public keyboardHandler: KeyboardHandler;
    private particleSystem: ParticleSystem;
+   private enemiesHandler: EnemiesHandler;
+   private collisionHandler: CollisionHandler;
 
    constructor(canvas:HTMLCanvasElement, imageArray: any){
       this.canvas = canvas; 
@@ -21,6 +25,8 @@ export default class GameModel {
       this.particleSystem = new ParticleSystem(this.graphics);
       this.spaceship = new Spaceship(this.graphics, this.imageHandler.getImage('spaceship'), {x: this.canvas.width / 2, y: this.canvas.height - 100}, {x: 50, y: 50}, this.particleSystem)
       this.keyboardHandler = new KeyboardHandler();
+      this.enemiesHandler = new EnemiesHandler(this.imageHandler, this.graphics, this.particleSystem);
+      this.collisionHandler = new CollisionHandler(this.spaceship, this.enemiesHandler);
       this.registerInput();
    }
 
@@ -31,9 +37,11 @@ export default class GameModel {
    }
 
    public update(elapsedTime: number){
-      this.particleSystem.linearParticles(10, {mean: 0.5, stdev: 0.2}, {mean: 0.5, stdev: 0.3});
+      this.particleSystem.linearParticles(10, {mean: 0.5, stdev: 0.2}, {mean: 0.8, stdev: 0.3});
+      this.enemiesHandler.update(elapsedTime);
       this.spaceship.update(elapsedTime)
       this.particleSystem.update(elapsedTime);
+      this.collisionHandler.checkSpaceshipMissiles();
    }
    
    public processInput(elapsedTime: number){
@@ -44,6 +52,7 @@ export default class GameModel {
       this.graphics.clearRect();
       this.particleSystem.render();
       this.spaceship.render();
+      this.enemiesHandler.render();
    }
 
 }
