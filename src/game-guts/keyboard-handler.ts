@@ -13,6 +13,12 @@ export default class KeyboardHandler {
       this.keys = {};
       this.handlers = {};
       this.onKeyUpHandlers = {};
+      window.addEventListener('keydown', function(e) {
+         if(e.keyCode === 32 && e.target === document.body) {
+           e.preventDefault();
+         }
+       });
+       
    }
    
    public registerCommand(key, handler, onKeyUp: boolean){

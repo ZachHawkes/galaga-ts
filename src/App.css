@@ -1,7 +1,8 @@
 .App {
   text-align: center;
   background-color: black;
-  height: 100%
+  height: 100%;
+  padding: 50px;
 }
 
 @keyframes App-logo-spin {
@@ -25,4 +26,37 @@ img {
 
 body > #root > div {
   height: 100vh;
+}
+
+.menu {
+  color: #364652; 
+  width: 50%;
+  margin: auto;
+  margin-top: 10px;
+}
+
+ul {
+  list-style-type: none;
+  margin: auto;
+  width: 100%;
+}
+
+.clickable-menu {
+  padding: 5px; 
+  background-color: white; 
+  margin: 5px;
+  border-radius: 15px;
+}
+
+.clickable-menu:hover {
+  background-color: #3F4045;
+  cursor: pointer;
+  color: white;
+}
+
+.title {
+  padding: 5px; 
+  background-color: white; 
+  margin: 5px;
+  border-radius: 15px;
 }
