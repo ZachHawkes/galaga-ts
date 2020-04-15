@@ -14,8 +14,9 @@ export default class Spaceship {
    private canvasSize: number;
    private missileArray: SpaceshipMissile[];
    private particleSystem: ParticleSystem;
+   private scoreHandler: any; 
 
-   constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem){
+   constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem, scores){
       this.graphics = graphics;
       this.image = spaceshipImage;
       this.position = position;
@@ -23,6 +24,7 @@ export default class Spaceship {
       this.canvasSize = 1024
       this.missileArray = [];
       this.particleSystem = particleSystem;
+      this.scoreHandler = scores;
    }
 
    public render(){
@@ -40,6 +42,7 @@ export default class Spaceship {
       if(this.missileArray.length < 2){
          const missile = new SpaceshipMissile({x: this.position.x, y: this.position.y - 10}, this.graphics, this.particleSystem);
          this.missileArray.push(missile)
+         this.scoreHandler.shotFired();
       }
    }
 

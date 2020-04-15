@@ -5,6 +5,7 @@ import KeyboardHandler from "./keyboard-handler";
 import ParticleSystem from "./particle-system";
 import EnemiesHandler from "./enemy-handler";
 import CollisionHandler from "./collision-handler";
+import ScoreHandler from "./score-handler";
 
 export default class GameModel {
    private canvas: HTMLCanvasElement;
@@ -16,6 +17,7 @@ export default class GameModel {
    private particleSystem: ParticleSystem;
    private enemiesHandler: EnemiesHandler;
    private collisionHandler: CollisionHandler;
+   private scoreHandler: ScoreHandler;
 
    constructor(canvas:HTMLCanvasElement, imageArray: any){
       this.canvas = canvas; 
@@ -23,9 +25,10 @@ export default class GameModel {
       this.graphics = new Graphics(this.canvas, this.context);
       this.imageHandler = new ImageHandler(imageArray);
       this.particleSystem = new ParticleSystem(this.graphics);
-      this.spaceship = new Spaceship(this.graphics, this.imageHandler.getImage('spaceship'), {x: this.canvas.width / 4, y: this.canvas.height - 100}, {x: 50, y: 50}, this.particleSystem)
       this.keyboardHandler = new KeyboardHandler();
-      this.enemiesHandler = new EnemiesHandler(this.imageHandler, this.graphics, this.particleSystem, this.spaceship.getPosition);
+      this.scoreHandler = new ScoreHandler();
+      this.spaceship = new Spaceship(this.graphics, this.imageHandler.getImage('spaceship'), {x: this.canvas.width / 2, y: this.canvas.height - 100}, {x: 50, y: 50}, this.particleSystem, this.scoreHandler)
+      this.enemiesHandler = new EnemiesHandler(this.imageHandler, this.graphics, this.particleSystem, this.spaceship.getPosition, this.scoreHandler);
       this.collisionHandler = new CollisionHandler(this.spaceship, this.enemiesHandler);
       this.registerInput();
    }

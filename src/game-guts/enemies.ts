@@ -1,4 +1,4 @@
-// parent class enemy --> subclass for each type
+import EnemyMissile from "./enemy-missile";
 interface IPosition {
    x: number,
    y: number,
@@ -23,8 +23,12 @@ export default class Enemy {
    private formationPosition: IPosition;
    private moveRate: number; 
    private doneAttacking: any; 
+   private missile: EnemyMissile; 
+   private attackTime: number; 
+   private spaceShipPosition: IPosition;
+   private scoreHandler: any; 
 
-   constructor(img: HTMLImageElement, pos: IPosition, graphics, particleSystem, isAttackComplete){
+   constructor(img: HTMLImageElement, pos: IPosition, graphics, particleSystem, isAttackComplete, scores){
       this.image = img; 
       this.position = pos;
       this.alive = true;
@@ -43,13 +47,16 @@ export default class Enemy {
          y: this.position.y,
       };
       this.doneAttacking = isAttackComplete;
+      this.attackTime = 0; 
+      this.scoreHandler = scores;
+      console.log(this.scoreHandler, scores)
    }
 
    // taken profPorkins github :)
-   private computeAngle(position: IPosition, target: IPosition): {angle: number, crossProduct: number}{
+   private computeAngle(position: IPosition, rotation, target: IPosition): {angle: number, crossProduct: number}{
       let v1 = {
-         x : Math.cos(this.rotation + (Math.PI / 2)),
-         y : Math.sin(this.rotation + (Math.PI / 2))
+         x : Math.cos(rotation + (Math.PI / 2)),
+         y : Math.sin(rotation + (Math.PI / 2))
       };
       let v2 = {
          x : position.x - target.x,
@@ -103,11 +110,19 @@ export default class Enemy {
          x: target.x,
          y: target.y - 300, 
       }
+      this.spaceShipPosition = target; 
    }
 
    public attack(spaceshipPosition: IPosition){
       this.attacking = true; 
       this.setTarget(spaceshipPosition)
+      if(Math.random() < 0.4)this.fireMissile(spaceshipPosition);
+   }
+
+   private fireMissile(target){
+      let result = this.computeAngle(this.position, this.rotation + (Math.PI / 2), target);
+      const definiteTarget = JSON.parse(JSON.stringify(this.position))
+      this.missile = new EnemyMissile(definiteTarget, result.angle, this.graphics, this.particleSystem);
    }
 
    public getCollisionInfo(){
@@ -121,6 +136,8 @@ export default class Enemy {
       this.particleSystem.explodeEnemy(this.position, 200, {mean: 1, stdev: 0.5}, {mean: 1.5, stdev: 0.3})
       this.alive = false; 
       if(this.attacking) this.doneAttacking();
+      this.scoreHandler.enemyHit();
+      this.scoreHandler.enemyDestroyed(this.attacking)
    }
 
    public isAlive(){
@@ -148,8 +165,8 @@ export default class Enemy {
 
    public update(elapsedTime: number){
       if(this.target){
-         // this code borrowed/modified from profPorkins github. 
-         let result = this.computeAngle(this.position, this.target);
+         // some of this code borrowed/modified from profPorkins github. 
+         let result = this.computeAngle(this.position, this.rotation, this.target);
          if(Math.abs(result.angle - this.rotation + (Math.PI / 2)) > 0.001){
             if(result.crossProduct > 0){
                if (result.angle > (this.rotationRate * (elapsedTime /1000))) {
@@ -176,8 +193,19 @@ export default class Enemy {
             this.target = this.formationPosition;
             this.attacking = false; 
             this.doneAttacking();
+            this.attackTime = 0; 
          }
          this.rotation = 0;
+      }
+      // bug here -- missile stays with enemy until enemy stops attacking. NO idea why yet.
+      // if(this.attacking){
+      //    this.attackTime += elapsedTime; 
+      //    if(this.attackTime > 100){
+      //       this.fireMissile(this.spaceShipPosition);
+      //    }
+      // }
+      if(this.missile && this.missile.isAlive()){
+         this.missile.update(elapsedTime); 
       }
    }
 
@@ -187,5 +215,8 @@ export default class Enemy {
 
    public render(){
       this.graphics.drawTexture(this.image, this.position, this.rotation, this.size);
+      if(this.missile && this.missile.isAlive()){
+         this.missile.render(); 
+      }
    }
 }

@@ -15,7 +15,7 @@ export default class EnemyMissile {
    private rotation: number; 
    private moveRate: number; 
 
-   constructor(pos: IPosition, graphics: Graphics, particleSystem: ParticleSystem){
+   constructor(pos: IPosition, rotation: number, graphics: Graphics, particleSystem: ParticleSystem){
       this.position = pos; 
       this.graphics = graphics; 
       this.particleSystem = particleSystem;
@@ -24,8 +24,8 @@ export default class EnemyMissile {
          y: 10,
       } 
       this.alive = true; 
-      this.rotation = 0; 
-      this.moveRate = 150; 
+      this.rotation = rotation; 
+      this.moveRate = 200; 
    }
 
    public destroyMissile(){
@@ -46,14 +46,13 @@ export default class EnemyMissile {
    }
 
    public update = (elapsedTime: number)=> {
-      this.particleSystem.missileThrust(this.position, 0, 1000, {mean: 1, stdev: 0.5}, {mean: 0.8, stdev: 0.3})
-      this.position.y -= 600 * (elapsedTime / 1000);
+      // this.particleSystem.missileThrust(this.position, this.rotation + (Math.PI / 2), 1000, {mean: 1, stdev: 0.5}, {mean: 0.8, stdev: 0.3})
       this.position.y += Math.sin(this.rotation) * this.moveRate * (elapsedTime / 1000);
       this.position.x += Math.cos(this.rotation) * this.moveRate * (elapsedTime / 1000);
    }
 
    public render(){
-      if(this.position.y > 0) this.graphics.drawRect({center: this.position, size: this.size, rotation: this.rotation, fill: "rgb(255,100, 0)", stroke: "rgb(255, 100, 0)"});
+      if(this.position.y > 0) this.graphics.drawRect({center: this.position, size: this.size, rotation: this.rotation + (Math.PI / 2), fill: "rgb(255,100, 0)", stroke: "rgb(255, 100, 0)"});
    }
 
    public isAlive(){

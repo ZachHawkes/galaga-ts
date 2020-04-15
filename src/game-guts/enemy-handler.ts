@@ -15,17 +15,19 @@ export default class EnemyHandler {
    private hasAttacked: number; // temporary
    private getSpaceShipPos: any;
    private attackTime: number; 
+   private scoreHandler: any; 
 
-   constructor(imgHandler, graphics, particleSystem, getSpaceshipPosition){
+   constructor(imgHandler, graphics, particleSystem, getSpaceshipPosition, scores){
       this.imageHandler = imgHandler;
       this.graphics = graphics; 
       this.particleSystem = particleSystem;
-      this.buildEnemies(4, 10);
+      this.scoreHandler = scores;
       this.shouldMoveLeft = true; 
+      this.buildEnemies(4, 10);
       this.moveTime = 0; 
       this.hasAttacked = 0; 
       this.getSpaceShipPos = getSpaceshipPosition;
-      this.attackTime = 0; 
+      this.attackTime = 0;
    }
 
    private buildEnemies(enemyRows: number, enemiesPerRow: number){
@@ -34,7 +36,7 @@ export default class EnemyHandler {
          let enemyRow = [];
          let yPosition = 150 + (rows *  50);
          for(let rowEnemies = 0; rowEnemies < enemiesPerRow; rowEnemies++){
-            enemyRow.push(new Enemy(this.imageHandler.getImage('butterfly'), {x: 200 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem, this.doneAttacking))
+            enemyRow.push(new Enemy(this.imageHandler.getImage('butterfly'), {x: 200 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem, this.doneAttacking, this.scoreHandler))
          }
          newEnemies.push(enemyRow);
       }
@@ -42,7 +44,6 @@ export default class EnemyHandler {
    }
 
    public doneAttacking = () =>{
-      console.log(this.hasAttacked)
       this.attackTime = 0; 
       this.hasAttacked--;
    }
@@ -96,16 +97,15 @@ export default class EnemyHandler {
    public update(elapsedTime: number){
       this.attackTime += elapsedTime;
       this.moveTime += elapsedTime;
-      console.log(this.attackTime)
       if(this.moveTime > 2000){
          this.shouldMoveLeft = !this.shouldMoveLeft;
          this.moveTime = 0; 
       }
-      if(this.attackTime > 3000){
+      if(this.attackTime > 2000){
          this.attackTime = 0; 
          this.hasAttacked--;
       }
-      if(this.hasAttacked < 3 && this.attackTime < 3000){
+      if(this.hasAttacked < 2 && this.attackTime < 3000){
          this.hasAttacked++;
          this.initiateAttack();
       }
