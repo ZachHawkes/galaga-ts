@@ -31,6 +31,7 @@ export default class GameModel {
       this.enemiesHandler = new EnemiesHandler(this.imageHandler, this.graphics, this.particleSystem, this.spaceship.getPosition, this.scoreHandler);
       this.collisionHandler = new CollisionHandler(this.spaceship, this.enemiesHandler);
       this.registerInput();
+      this.spaceship.registerEnemyNotification(this.enemiesHandler.resumeAttacking);
    }
 
    public registerInput(){

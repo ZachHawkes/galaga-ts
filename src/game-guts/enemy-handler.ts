@@ -113,11 +113,13 @@ export default class EnemyHandler {
    }
 
    public stopAttacking(){
-      this.clearanceToAttack = false; 
+      this.clearanceToAttack = false;
    }
 
-   public resumeAttacking(){
+   public resumeAttacking = ()=>{
       this.clearanceToAttack = true; 
+      this.attackTime = 0;
+      this.hasAttacked = 0;
    }
 
    public update(elapsedTime: number){
@@ -127,7 +129,7 @@ export default class EnemyHandler {
          this.shouldMoveLeft = !this.shouldMoveLeft;
          this.moveTime = 0; 
       }
-      if(this.attackTime > 2000){
+      if(this.attackTime > 2000 && this.clearanceToAttack){
          this.attackTime = 0; 
          this.hasAttacked--;
       }

@@ -51,7 +51,7 @@ export default class Game extends Component {
    render(){
       return(
          <div>
-            <canvas ref={this.canvas} width='1024' height='1024'></canvas>
+            <canvas ref={this.canvas} width='1024' height='1024' className="canvas"></canvas>
             <img src={spaceship_small_blue} alt="spaceship" ref={this.spaceship} />
             <img src={butterfly} alt="butterfly-enemy" ref={this.butterfly} />
          </div>

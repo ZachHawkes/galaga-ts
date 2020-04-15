@@ -113,9 +113,9 @@ export default class Enemy {
    }
 
    public attack(spaceshipPosition: IPosition){
-      this.attacking = true; 
+      this.attacking = true;  
       this.setTarget(spaceshipPosition)
-      if(Math.random() < 0.4)this.fireMissile(spaceshipPosition);
+      if(Math.random() < 0.6)this.fireMissile(spaceshipPosition);
    }
 
    private fireMissile(target){
@@ -148,7 +148,7 @@ export default class Enemy {
    }
 
    public getMissileCollisionInfo(){
-      return this.missile ? this.missile.getCollisionInfo(): undefined;
+      return this.missile ? this.missile.getCollisionInfo() : undefined;
    }
 
    public moveLeft(elapsedTime: number){

@@ -15,7 +15,10 @@ export default class Spaceship {
    private missileArray: SpaceshipMissile[];
    private particleSystem: ParticleSystem;
    private scoreHandler: any; 
-   private alive: boolean; 
+   private alive: boolean;
+   private constructionTime: number; 
+   private lives: number; 
+   private notifyEnemyHandler: any;
 
    constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem, scores){
       this.graphics = graphics;
@@ -27,21 +30,49 @@ export default class Spaceship {
       this.particleSystem = particleSystem;
       this.scoreHandler = scores;
       this.alive = true; 
+      this.constructionTime = 0; 
+      this.lives = 3;
    }
 
    public render(){
       if(this.alive) this.graphics.drawTexture(this.image, this.position, 0, this.size);
+      for(let i = 0; i < this.lives - 1; i++){
+         this.graphics.drawTexture(this.image, {x: this.size.x + (i * (this.size.x + 10)), y: this.canvasSize - (this.size.y)}, 0, this.size);
+      }
       this.missileArray.forEach(missle=>missle.render())
    }
 
    public update(elapsedTime: number){
+      if(!this.alive){
+         this.constructionTime += elapsedTime;
+         if(this.constructionTime > 5000 && this.lives > 0){
+            this.lives--;
+            this.constructNewSpaceShip();
+            this.notifyEnemyHandler();
+            this.constructionTime = 0;
+         }
+      }
       const updateArray = this.missileArray.filter(missile=>missile.isAlive())
       updateArray.forEach(missile=>missile.update(elapsedTime));
       this.missileArray = updateArray;
    }
 
+   public constructNewSpaceShip(){
+      this.position = {
+         x: this.canvasSize / 2,
+         y: this.canvasSize - 100,
+      }
+      this.alive = true; 
+   }
+
+   // For the future, I want to create a notification service that handles communication between enemies and spaceship
+   // this is quick and dirty because I need it to work. 
+   public registerEnemyNotification(handler){
+      this.notifyEnemyHandler = handler; 
+   }
+
    public fire = () =>{
-      if(this.missileArray.length < 2){
+      if(this.missileArray.length < 2 && this.alive){
          const missile = new SpaceshipMissile({x: this.position.x, y: this.position.y - 10}, this.graphics, this.particleSystem);
          this.missileArray.push(missile)
          this.scoreHandler.shotFired();
@@ -66,6 +97,7 @@ export default class Spaceship {
    public destroySpaceship(){
       this.particleSystem.explodeEnemy(this.position, 1000, {mean: 2, stdev: 1}, {mean: 3, stdev: 1})
       this.alive = false; 
+      this.position = {x: 0, y: 0}
    }
 
    public getMissileCollisionInfo(){

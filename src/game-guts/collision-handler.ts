@@ -21,7 +21,7 @@ export default class CollisionHandler {
       let destroyMissilesArray = [];
       let destroyEnemyArray = [];
 
-      // could use some optimization;
+      // could use some optimization; for loops are faster, this way i smore readable. 
       if(missileArray.length !== 0){ 
          enemyArray.forEach((row, rowIndex)=>{
             row.forEach((enemy, enemyIndex)=>{
