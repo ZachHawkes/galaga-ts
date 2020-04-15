@@ -9,7 +9,8 @@ export default class Game extends Component {
    private gameModel: GameModel;
    private spaceship: any;
    private butterfly: any; 
-   private previousTime: number; 
+   private previousTime: number;
+   private gameOver: boolean;  
 
    constructor(props: any){
       super(props);
@@ -21,6 +22,7 @@ export default class Game extends Component {
          isGameOver: false,
          level: 1,
       }
+      this.gameOver = false; 
    }  
    
    componentDidMount(){
@@ -41,7 +43,6 @@ export default class Game extends Component {
       this.gameModel.processInput(elapsedTime);
       this.gameModel.update(elapsedTime);
       this.gameModel.render();
-
 
       requestAnimationFrame(this.gameloop)
    }

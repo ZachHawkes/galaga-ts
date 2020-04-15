@@ -21,7 +21,7 @@ export default class CollisionHandler {
       let destroyMissilesArray = [];
       let destroyEnemyArray = [];
 
-      // this needs to be faster. Gonna have to use for loops.
+      // could use some optimization;
       if(missileArray.length !== 0){ 
          enemyArray.forEach((row, rowIndex)=>{
             row.forEach((enemy, enemyIndex)=>{
@@ -39,6 +39,21 @@ export default class CollisionHandler {
       }
       this.spaceShip.receiveCollisionInfo(destroyMissilesArray);
       this.enemyHandler.receiveCollisionInfo(destroyEnemyArray);
+   }
+
+   public checkEnemyMissiles(){
+      let spaceshipInfo = this.spaceShip.getCollisionInfo();
+      let missileInfo = this.enemyHandler.getMissileCollisionInfo();
+      
+      // using the for loop so I can return out of it early
+      for(let i = 0; i < missileInfo.length; i++){
+         if(this.lineCircleIntersection(missileInfo[i].collisionInfo.pt1, missileInfo[i].collisionInfo.pt2, spaceshipInfo)){
+            this.spaceShip.destroySpaceship();
+            this.enemyHandler.destroyMissile(missileInfo[i].index)
+            return true;
+         }
+      }
+      return false; 
    }
 
    // Reference: https://stackoverflow.com/questions/37224912/circle-line-segment-collision

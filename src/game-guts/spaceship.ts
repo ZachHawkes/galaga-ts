@@ -15,6 +15,7 @@ export default class Spaceship {
    private missileArray: SpaceshipMissile[];
    private particleSystem: ParticleSystem;
    private scoreHandler: any; 
+   private alive: boolean; 
 
    constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem, scores){
       this.graphics = graphics;
@@ -25,10 +26,11 @@ export default class Spaceship {
       this.missileArray = [];
       this.particleSystem = particleSystem;
       this.scoreHandler = scores;
+      this.alive = true; 
    }
 
    public render(){
-      this.graphics.drawTexture(this.image, this.position, 0, this.size);
+      if(this.alive) this.graphics.drawTexture(this.image, this.position, 0, this.size);
       this.missileArray.forEach(missle=>missle.render())
    }
 
@@ -48,7 +50,7 @@ export default class Spaceship {
 
    public getCollisionInfo(){
       return {
-         position: this.position,
+         center: this.position,
          radius: this.size.x / 2,
       }
    }
@@ -59,6 +61,11 @@ export default class Spaceship {
 
    public receiveCollisionInfo(missilesToDestroy: number[]){
       missilesToDestroy.forEach(missileIndex=>this.missileArray[missileIndex].destroyMissile());
+   }
+
+   public destroySpaceship(){
+      this.particleSystem.explodeEnemy(this.position, 1000, {mean: 2, stdev: 1}, {mean: 3, stdev: 1})
+      this.alive = false; 
    }
 
    public getMissileCollisionInfo(){

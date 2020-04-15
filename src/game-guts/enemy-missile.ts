@@ -57,8 +57,14 @@ export default class EnemyMissile {
 
    public isAlive(){
       if(!this.alive) return false; 
-      this.alive = this.position.y > 0; 
-      return this.alive;
+      return this.isInbounds();
    }
 
+   private isInbounds(): boolean{
+      if(this.position.x < 0) return false; 
+      if(this.position.x > 1024) return false; 
+      if(this.position.y < 0) return false; 
+      if(this.position.y > 1024) return false; 
+      return true;
+   }
 }

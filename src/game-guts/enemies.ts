@@ -49,7 +49,6 @@ export default class Enemy {
       this.doneAttacking = isAttackComplete;
       this.attackTime = 0; 
       this.scoreHandler = scores;
-      console.log(this.scoreHandler, scores)
    }
 
    // taken profPorkins github :)
@@ -140,10 +139,17 @@ export default class Enemy {
       this.scoreHandler.enemyDestroyed(this.attacking)
    }
 
+   public destroyMissile(){
+      this.missile = undefined; 
+   }
+
    public isAlive(){
       return this.alive; 
    }
 
+   public getMissileCollisionInfo(){
+      return this.missile ? this.missile.getCollisionInfo(): undefined;
+   }
 
    public moveLeft(elapsedTime: number){
       if(this.position.x - (this.size.x / 2) > 0 && !this.attacking){
@@ -205,7 +211,11 @@ export default class Enemy {
       //    }
       // }
       if(this.missile && this.missile.isAlive()){
-         this.missile.update(elapsedTime); 
+         this.missile.update(elapsedTime);
+         if(!this.missile.isAlive()) {
+            this.missile = undefined; 
+            console.log("The missile died!")
+         }
       }
    }
 

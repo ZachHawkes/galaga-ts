@@ -46,6 +46,8 @@ export default class GameModel {
       this.spaceship.update(elapsedTime)
       this.particleSystem.update(elapsedTime);
       this.collisionHandler.checkSpaceshipMissiles();
+      let gameStatus = this.collisionHandler.checkEnemyMissiles();
+      if(gameStatus) this.enemiesHandler.stopAttacking();
    }
    
    public processInput(elapsedTime: number){

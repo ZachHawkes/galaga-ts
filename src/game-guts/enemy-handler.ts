@@ -15,7 +15,8 @@ export default class EnemyHandler {
    private hasAttacked: number; // temporary
    private getSpaceShipPos: any;
    private attackTime: number; 
-   private scoreHandler: any; 
+   private scoreHandler: any;
+   private clearanceToAttack: boolean;
 
    constructor(imgHandler, graphics, particleSystem, getSpaceshipPosition, scores){
       this.imageHandler = imgHandler;
@@ -28,6 +29,7 @@ export default class EnemyHandler {
       this.hasAttacked = 0; 
       this.getSpaceShipPos = getSpaceshipPosition;
       this.attackTime = 0;
+      this.clearanceToAttack = true; 
    }
 
    private buildEnemies(enemyRows: number, enemiesPerRow: number){
@@ -81,6 +83,22 @@ export default class EnemyHandler {
       })
    }
 
+   public getMissileCollisionInfo(){
+      let collisionInfo = this.enemies.map((row, rowIndex)=>{
+         return row.map((enemy, enemyIndex)=>{
+            return {
+               collisionInfo: enemy.getMissileCollisionInfo(),
+               index: [rowIndex, enemyIndex],
+            }
+         })
+      }).flat().filter(missileInfo=>missileInfo.collisionInfo !== undefined);
+      return collisionInfo;
+   }
+
+   public destroyMissile(indexInfo){
+      this.enemies[indexInfo[0]][indexInfo[1]].destroyMissile();
+   }
+
    public introduceEnemies(){
       // path enemies one at a time, row by row. use elapsed time. New enemy each frame or two or three. 
    }
@@ -94,6 +112,14 @@ export default class EnemyHandler {
       return true; 
    }
 
+   public stopAttacking(){
+      this.clearanceToAttack = false; 
+   }
+
+   public resumeAttacking(){
+      this.clearanceToAttack = true; 
+   }
+
    public update(elapsedTime: number){
       this.attackTime += elapsedTime;
       this.moveTime += elapsedTime;
@@ -105,7 +131,7 @@ export default class EnemyHandler {
          this.attackTime = 0; 
          this.hasAttacked--;
       }
-      if(this.hasAttacked < 2 && this.attackTime < 3000){
+      if(this.hasAttacked < 2 && this.attackTime < 3000 && this.clearanceToAttack){
          this.hasAttacked++;
          this.initiateAttack();
       }
