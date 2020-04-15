@@ -1,22 +1,22 @@
 import React, { Component } from "react";
 
 interface IScores {
+   name: string;
    score: number;
    shots: number;
    hits: number; 
 }
 
-export default class HighScores extends Component<{}, {scores: IScores[]}, {}> {
+export default class HighScores extends Component {
+   private scores: IScores[];
    constructor(props){
       super(props);
-      this.state = {
-         scores: [] 
-      }
+      this.scores = [{name: "Zach", score: 50000, shots: 300, hits: 300}, {name: "Zach", score: 50000, shots: 300, hits: 300}, {name: "Zach", score: 50000, shots: 300, hits: 300}];
    }
 
    renderScores = () => {
-      const scores = this.state.scores; 
-      return scores.map(score=><li className="clickable-menu">score</li>)
+      const scores = this.scores; 
+      return scores.map(score=><li className="title">{score.name}</li>)
    }
 
 

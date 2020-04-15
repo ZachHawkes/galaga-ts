@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Controls from "./controls";
 import HighScores from "./high-scores";
 import Game from "./game";
+import Galaga from "../assets/galaga.png"
 
 export default class MainMenu extends Component<{}, {menu: string}, {}> {
    private menuMusic: HTMLAudioElement;
@@ -33,23 +34,31 @@ export default class MainMenu extends Component<{}, {menu: string}, {}> {
       this.setState({menu: "highScores"});
    }
 
+   showCredits = () => {
+      this.setState({menu: "credits"})
+   }
+
    startGame = () => {
       this.setState({menu: "game"})
    }
 
    render(){
       const mainMenu = (
+         
          <div className="menu">
+         <img src={Galaga} alt="GalagaTitle" className="showImage" />
             <ul>
                <li className="clickable-menu" onClick={this.startGame}>Start Game</li>
                <li className="clickable-menu" onClick={this.showControls}>Controls</li>
                <li className="clickable-menu" onClick={this.showHighscores}>High Scores</li>
-               <li className="clickable-menu">Credits</li>
+               <li className="clickable-menu" onClick={this.showCredits}>Credits</li>
             </ul>
          </div>
       )
       const controls = (
+         
          <div className="menu">
+         <img src={Galaga} alt="GalagaTitle" className="showImage" />
             <Controls />
             <ul>
                <li className="clickable-menu" onClick={this.showMainMenu}>Back to Main Menu</li>
@@ -57,9 +66,21 @@ export default class MainMenu extends Component<{}, {menu: string}, {}> {
          </div>
       )
       const highScores = (
+         
          <div className="menu">
+         <img src={Galaga} alt="GalagaTitle" className="showImage" />
             <HighScores />
             <ul>
+               <li className="clickable-menu" onClick={this.showMainMenu}>Back to Main Menu</li>
+            </ul>
+         </div>
+      )
+      const credits = (
+         
+         <div className="menu">
+         <img src={Galaga} alt="GalagaTitle" className="showImage" />
+            <ul>
+               <li className="title">Zach Hawkes worked really hard on this. </li>
                <li className="clickable-menu" onClick={this.showMainMenu}>Back to Main Menu</li>
             </ul>
          </div>
@@ -70,7 +91,8 @@ export default class MainMenu extends Component<{}, {menu: string}, {}> {
          mainMenu,
          controls,
          highScores,
-         game: <Game />
+         game: <Game />, 
+         credits
       }
 
       return renderObject[this.state.menu]

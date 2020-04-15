@@ -60,3 +60,9 @@ ul {
   margin: 5px;
   border-radius: 15px;
 }
+
+.showImage {
+  display: block;
+  width: 500px;
+  margin: auto; 
+}
