@@ -50,6 +50,10 @@ export default class Spaceship {
       }
    }
 
+   public getPosition = ()=>{
+      return this.position; 
+   }
+
    public receiveCollisionInfo(missilesToDestroy: number[]){
       missilesToDestroy.forEach(missileIndex=>this.missileArray[missileIndex].destroyMissile());
    }
@@ -108,7 +112,7 @@ class SpaceshipMissile {
 
    public update = (elapsedTime: number)=> {
       this.particleSystem.missileThrust(this.position, 0, 1000, {mean: 1, stdev: 0.5}, {mean: 0.8, stdev: 0.3})
-      this.position.y -= 1024 * (elapsedTime / 1000);
+      this.position.y -= 600 * (elapsedTime / 1000);
    }
 
    public render(){

@@ -12,14 +12,20 @@ export default class EnemyHandler {
    private particleSystem: any;
    private shouldMoveLeft: boolean;
    private moveTime: number; 
+   private hasAttacked: number; // temporary
+   private getSpaceShipPos: any;
+   private attackTime: number; 
 
-   constructor(imgHandler, graphics, particleSystem){
+   constructor(imgHandler, graphics, particleSystem, getSpaceshipPosition){
       this.imageHandler = imgHandler;
       this.graphics = graphics; 
       this.particleSystem = particleSystem;
       this.buildEnemies(4, 10);
       this.shouldMoveLeft = true; 
       this.moveTime = 0; 
+      this.hasAttacked = 0; 
+      this.getSpaceShipPos = getSpaceshipPosition;
+      this.attackTime = 0; 
    }
 
    private buildEnemies(enemyRows: number, enemiesPerRow: number){
@@ -28,11 +34,17 @@ export default class EnemyHandler {
          let enemyRow = [];
          let yPosition = 150 + (rows *  50);
          for(let rowEnemies = 0; rowEnemies < enemiesPerRow; rowEnemies++){
-            enemyRow.push(new Enemy(this.imageHandler.getImage('butterfly'), {x: 200 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem))
+            enemyRow.push(new Enemy(this.imageHandler.getImage('butterfly'), {x: 200 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem, this.doneAttacking))
          }
          newEnemies.push(enemyRow);
       }
       this.enemies = newEnemies;
+   }
+
+   public doneAttacking = () =>{
+      console.log(this.hasAttacked)
+      this.attackTime = 0; 
+      this.hasAttacked--;
    }
 
    private hoverEnemies(elapsedTime: number){
@@ -48,7 +60,12 @@ export default class EnemyHandler {
    }
 
    private initiateAttack(){
-
+      let spaceshipPosition = this.getSpaceShipPos(); 
+      let indexToAttack = Math.floor(Math.random() * this.enemies.length)
+      let secondIndextToAttack = Math.floor(Math.random() * this.enemies[indexToAttack].length);
+      if(this.enemies[indexToAttack][secondIndextToAttack] && !this.enemies[indexToAttack][secondIndextToAttack].isAttacking()){
+         this.enemies[indexToAttack][secondIndextToAttack].attack(spaceshipPosition);
+      }
    }
 
    public getCollisionInfo(): {center: IPosition, radius: number}[][]{
@@ -67,11 +84,33 @@ export default class EnemyHandler {
       // path enemies one at a time, row by row. use elapsed time. New enemy each frame or two or three. 
    }
 
+   public areAllEnemiesDown(){
+      for(let i = 0; i < this.enemies.length; i++){
+         if(this.enemies[i].length !== 0){
+            return false; 
+         }
+      }
+      return true; 
+   }
+
    public update(elapsedTime: number){
+      this.attackTime += elapsedTime;
       this.moveTime += elapsedTime;
+      console.log(this.attackTime)
       if(this.moveTime > 2000){
          this.shouldMoveLeft = !this.shouldMoveLeft;
          this.moveTime = 0; 
+      }
+      if(this.attackTime > 3000){
+         this.attackTime = 0; 
+         this.hasAttacked--;
+      }
+      if(this.hasAttacked < 3 && this.attackTime < 3000){
+         this.hasAttacked++;
+         this.initiateAttack();
+      }
+      if(this.areAllEnemiesDown()){
+         this.buildEnemies(4, 10)
       }
       this.hoverEnemies(elapsedTime)
       this.enemies = this.enemies.map(row=>row.filter(enemy=>enemy.isAlive()))

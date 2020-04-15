@@ -22,7 +22,6 @@ export default class CollisionHandler {
       let destroyEnemyArray = [];
 
       // this needs to be faster. Gonna have to use for loops.
-      console.log("ArrayLength", enemyArray[2].length)
       if(missileArray.length !== 0){ 
          enemyArray.forEach((row, rowIndex)=>{
             row.forEach((enemy, enemyIndex)=>{

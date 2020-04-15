@@ -23,9 +23,9 @@ export default class GameModel {
       this.graphics = new Graphics(this.canvas, this.context);
       this.imageHandler = new ImageHandler(imageArray);
       this.particleSystem = new ParticleSystem(this.graphics);
-      this.spaceship = new Spaceship(this.graphics, this.imageHandler.getImage('spaceship'), {x: this.canvas.width / 2, y: this.canvas.height - 100}, {x: 50, y: 50}, this.particleSystem)
+      this.spaceship = new Spaceship(this.graphics, this.imageHandler.getImage('spaceship'), {x: this.canvas.width / 4, y: this.canvas.height - 100}, {x: 50, y: 50}, this.particleSystem)
       this.keyboardHandler = new KeyboardHandler();
-      this.enemiesHandler = new EnemiesHandler(this.imageHandler, this.graphics, this.particleSystem);
+      this.enemiesHandler = new EnemiesHandler(this.imageHandler, this.graphics, this.particleSystem, this.spaceship.getPosition);
       this.collisionHandler = new CollisionHandler(this.spaceship, this.enemiesHandler);
       this.registerInput();
    }
@@ -37,6 +37,7 @@ export default class GameModel {
    }
 
    public update(elapsedTime: number){
+      // console.log(elapsedTime)
       this.particleSystem.linearParticles(10, {mean: 0.5, stdev: 0.2}, {mean: 0.8, stdev: 0.3});
       this.enemiesHandler.update(elapsedTime);
       this.spaceship.update(elapsedTime)

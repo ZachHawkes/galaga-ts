@@ -14,27 +14,100 @@ export default class Enemy {
    private attacking: boolean; 
    private rotation: number;
    private rotationRate: number; 
-   private target: {
-      x: number;
-      y: number;
-      rotation: number; 
-   }
-   private attackpath: IPosition[]; // series of points to go to. Relative. [0,0; 100,500; 300,0; 0,0] 100 over, 500 down, 300 over, 0 down, back to initial point
+   private attackPath: IPosition[]; // series of points to go to. Relative. [0,0; 100,500; 300,0; 0,0] 100 over, 500 down, 300 over, 0 down, back to initial point
    private entryPath: IPosition[];
+   private currentPath: IPosition[];
    private graphics: any;
    private particleSystem: any;
+   private target: IPosition;
+   private formationPosition: IPosition;
+   private moveRate: number; 
+   private doneAttacking: any; 
 
-   constructor(img: HTMLImageElement, pos: IPosition, graphics, particleSystem){
+   constructor(img: HTMLImageElement, pos: IPosition, graphics, particleSystem, isAttackComplete){
       this.image = img; 
       this.position = pos;
       this.alive = true;
-      this.rotationRate = Math.PI;
+      this.rotationRate = 2 * Math.PI;
       this.graphics = graphics; 
       this.particleSystem = particleSystem;
       this.size = {
          x: 25,
          y: 25,
       }
+      this.attackPath = [{x: 200, y: 500}, {x: 0, y: -500}];
+      this.rotation = 0; 
+      this.moveRate = 300;
+      this.formationPosition = {
+         x: this.position.x,
+         y: this.position.y,
+      };
+      this.doneAttacking = isAttackComplete;
+   }
+
+   // taken profPorkins github :)
+   private computeAngle(position: IPosition, target: IPosition): {angle: number, crossProduct: number}{
+      let v1 = {
+         x : Math.cos(this.rotation + (Math.PI / 2)),
+         y : Math.sin(this.rotation + (Math.PI / 2))
+      };
+      let v2 = {
+         x : position.x - target.x,
+         y : position.y - target.y
+      };
+
+      let v2len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+      v2.x /= v2len;
+      v2.y /= v2len;
+
+      let dp = v1.x * v2.x + v1.y * v2.y;
+      let angle = Math.acos(dp);
+      //
+      // It is possible to get a NaN result, when that happens, set the angle to
+      // 0 so that any use of it doesn't have to check for NaN.
+      if (isNaN(angle)) {
+         angle = 0;
+      }
+
+      //
+      // Get the cross product of the two vectors so we can know
+      // which direction to rotate.
+      let cp = this.crossProduct(v1, v2);
+
+      return {
+         angle : angle,
+         crossProduct : cp
+      };
+   }
+      
+   // also taken from profPorkins github
+   private crossProduct(v1: IPosition, v2: IPosition){
+      return (v1.x * v2.y) - (v1.y * v2.x);
+   }
+
+   // also taken from profPorkins github
+   private moveForward(elapsedTime: number){
+      //
+        // Create a normalized direction vector
+        let vectorX = Math.cos(this.rotation + (Math.PI / 2));
+        let vectorY = Math.sin(this.rotation + (Math.PI / 2));
+        //
+        // With the normalized direction vector, move the center of the sprite
+        this.position.x += (vectorX * this.moveRate * (elapsedTime / 1000)) * -1;
+        this.position.y += (vectorY * this.moveRate * (elapsedTime  / 1000)) * -1;
+
+   }
+
+   private setTarget(target: IPosition){
+      this.target = {
+         x: target.x,
+         y: target.y - 300, 
+      }
+   }
+
+   public attack(spaceshipPosition: IPosition){
+      this.attacking = true; 
+      this.setTarget(spaceshipPosition)
    }
 
    public getCollisionInfo(){
@@ -47,43 +120,72 @@ export default class Enemy {
    public destroyEnemy(){
       this.particleSystem.explodeEnemy(this.position, 200, {mean: 1, stdev: 0.5}, {mean: 1.5, stdev: 0.3})
       this.alive = false; 
+      if(this.attacking) this.doneAttacking();
    }
 
    public isAlive(){
       return this.alive; 
    }
 
-   public attackPath(initialTarget: IPosition){
-      // follow path, given initial target Point
-      // no curves for now
-   }
-
-   public attack(target: IPosition){
-      // fire missile at player position
-   }
-
-   // negative direction for left, positive for right
-   public rotate(elapsedTime){
-      this.rotation += this.rotationRate * (elapsedTime / 1000) 
-   }
 
    public moveLeft(elapsedTime: number){
-      if(this.position.x - (this.size.x / 2) > 0){
+      if(this.position.x - (this.size.x / 2) > 0 && !this.attacking){
          this.position.x -= 35 * (elapsedTime / 1000)
+         this.formationPosition.x -= 35 * (elapsedTime / 1000)
+      } else {
+         this.formationPosition.x -= 35 * (elapsedTime / 1000)
       }
    }
 
    public moveRight(elapsedTime: number){
       if(this.position.x + (this.size.x / 2) < CANVAS_SIZE){
          this.position.x += 35 * (elapsedTime / 1000)
+         this.formationPosition.x += 35 * (elapsedTime / 1000)
+      } else {
+         this.formationPosition.x += 35 * (elapsedTime / 1000)
       }
    }
 
-   public update(elapsedTime){
-      
+   public update(elapsedTime: number){
+      if(this.target){
+         // this code borrowed/modified from profPorkins github. 
+         let result = this.computeAngle(this.position, this.target);
+         if(Math.abs(result.angle - this.rotation + (Math.PI / 2)) > 0.001){
+            if(result.crossProduct > 0){
+               if (result.angle > (this.rotationRate * (elapsedTime /1000))) {
+                  this.rotation += (this.rotationRate * (elapsedTime / 1000));
+               } else {
+                     this.rotation += result.angle;
+               }
+            } else {
+               if (result.angle > (this.rotationRate * (elapsedTime / 1000))) {
+                   this.rotation -= (this.rotationRate * (elapsedTime / 1000));
+               } else {
+                   this.rotation -= result.angle;
+               }
+           }
+         }
+         let distance = Math.sqrt(Math.pow(this.position.x - this.target.x, 2) + Math.pow(this.position.y - this.target.y, 2))
+         if(distance > 3){
+            this.moveForward(elapsedTime)
+         } else {
+            this.target = null; 
+         }
+      } else {
+         if(this.attacking){
+            this.target = this.formationPosition;
+            this.attacking = false; 
+            this.doneAttacking();
+         }
+         this.rotation = 0;
+      }
+   }
+
+   public isAttacking(){
+      return this.attacking; 
    }
 
    public render(){
-      this.graphics.drawTexture(this.image, this.position, 0, this.size);
+      this.graphics.drawTexture(this.image, this.position, this.rotation, this.size);
    }
 }
