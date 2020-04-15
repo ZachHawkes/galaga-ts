@@ -19,6 +19,8 @@ export default class Spaceship {
    private constructionTime: number; 
    private lives: number; 
    private notifyEnemyHandler: any;
+   private missileFireSound: any; 
+   private deathCry: any;
 
    constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem, scores){
       this.graphics = graphics;
@@ -32,6 +34,11 @@ export default class Spaceship {
       this.alive = true; 
       this.constructionTime = 0; 
       this.lives = 3;
+
+      this.missileFireSound = new Audio();
+      this.missileFireSound.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/missileFire.mp3";
+      this.deathCry = new Audio();
+      this.deathCry.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/enemyExplosion.mp3";
    }
 
    public render(){
@@ -76,6 +83,9 @@ export default class Spaceship {
          const missile = new SpaceshipMissile({x: this.position.x, y: this.position.y - 10}, this.graphics, this.particleSystem);
          this.missileArray.push(missile)
          this.scoreHandler.shotFired();
+         this.missileFireSound.volume = 0.1;
+         this.missileFireSound.currentTime = 0;
+         this.missileFireSound.play();
       }
    }
 
@@ -98,6 +108,7 @@ export default class Spaceship {
       this.particleSystem.explodeEnemy(this.position, 1000, {mean: 2, stdev: 1}, {mean: 3, stdev: 1})
       this.alive = false; 
       this.position = {x: 0, y: 0}
+      this.deathCry.play();
    }
 
    public getMissileCollisionInfo(){
@@ -116,6 +127,12 @@ export default class Spaceship {
       }
    }
 }
+
+
+
+/***********************************/
+
+
 
 class SpaceshipMissile {
    private position: IPosition;

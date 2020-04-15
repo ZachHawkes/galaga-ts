@@ -27,6 +27,7 @@ export default class Enemy {
    private attackTime: number; 
    private spaceShipPosition: IPosition;
    private scoreHandler: any; 
+   private explosionSound: HTMLAudioElement;
 
    constructor(img: HTMLImageElement, pos: IPosition, graphics, particleSystem, isAttackComplete, scores){
       this.image = img; 
@@ -49,6 +50,8 @@ export default class Enemy {
       this.doneAttacking = isAttackComplete;
       this.attackTime = 0; 
       this.scoreHandler = scores;
+      this.explosionSound = new Audio();
+      this.explosionSound.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/secondExplosion.mp3";
    }
 
    // taken profPorkins github :)
@@ -137,6 +140,7 @@ export default class Enemy {
       if(this.attacking) this.doneAttacking();
       this.scoreHandler.enemyHit();
       this.scoreHandler.enemyDestroyed(this.attacking)
+      this.explosionSound.play();
    }
 
    public destroyMissile(){

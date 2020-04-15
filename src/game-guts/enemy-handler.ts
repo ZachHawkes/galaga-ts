@@ -24,12 +24,12 @@ export default class EnemyHandler {
       this.particleSystem = particleSystem;
       this.scoreHandler = scores;
       this.shouldMoveLeft = true; 
+      this.clearanceToAttack = false; 
       this.buildEnemies(4, 10);
       this.moveTime = 0; 
       this.hasAttacked = 0; 
       this.getSpaceShipPos = getSpaceshipPosition;
       this.attackTime = 0;
-      this.clearanceToAttack = true; 
    }
 
    private buildEnemies(enemyRows: number, enemiesPerRow: number){
@@ -43,6 +43,7 @@ export default class EnemyHandler {
          newEnemies.push(enemyRow);
       }
       this.enemies = newEnemies;
+      this.clearanceToAttack = true; 
    }
 
    public doneAttacking = () =>{

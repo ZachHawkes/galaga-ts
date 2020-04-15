@@ -11,6 +11,7 @@ export default class Game extends Component {
    private butterfly: any; 
    private previousTime: number;
    private gameOver: boolean;  
+   private gameMusic: HTMLAudioElement;
 
    constructor(props: any){
       super(props);
@@ -23,11 +24,16 @@ export default class Game extends Component {
          level: 1,
       }
       this.gameOver = false; 
+      this.gameMusic = new Audio();
+      this.gameMusic.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/galaga-music.mp3";
+      this.gameMusic.volume = 0.5;
+      this.gameMusic.loop = true; 
    }  
    
    componentDidMount(){
       this.gameModel = new GameModel(this.canvas.current, this.buildImageArray())
       requestAnimationFrame(this.gameloop);
+      // this.gameMusic.play();
    }
 
    buildImageArray = () =>{
