@@ -2,7 +2,7 @@
   text-align: center;
   background-color: black;
   height: 100%;
-  padding: 50px;
+  padding: 20px;
 }
 
 @keyframes App-logo-spin {
@@ -59,6 +59,10 @@ ul {
   background-color: white; 
   margin: 5px;
   border-radius: 15px;
+}
+
+.canvas {
+  width: 75%;
 }
 
 .showImage {

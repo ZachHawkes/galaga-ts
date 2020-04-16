@@ -29,7 +29,7 @@ export default class Enemy {
    private scoreHandler: any; 
    private explosionSound: HTMLAudioElement;
 
-   constructor(img: HTMLImageElement, pos: IPosition, graphics, particleSystem, isAttackComplete, scores){
+   constructor(img: HTMLImageElement, pos: IPosition, formPosition: IPosition, graphics, particleSystem, isAttackComplete, scores){
       this.image = img; 
       this.position = pos;
       this.alive = true;
@@ -43,15 +43,13 @@ export default class Enemy {
       this.attackPath = [{x: 200, y: 500}, {x: 0, y: -500}];
       this.rotation = 0; 
       this.moveRate = 300;
-      this.formationPosition = {
-         x: this.position.x,
-         y: this.position.y,
-      };
+      this.formationPosition = formPosition
       this.doneAttacking = isAttackComplete;
       this.attackTime = 0; 
       this.scoreHandler = scores;
       this.explosionSound = new Audio();
       this.explosionSound.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/secondExplosion.mp3";
+      console.log(this.position)
    }
 
    // taken profPorkins github :)
@@ -153,6 +151,11 @@ export default class Enemy {
 
    public getMissileCollisionInfo(){
       return this.missile ? this.missile.getCollisionInfo() : undefined;
+   }
+
+   public enterScreen(){
+      console.log("Entering")
+      this.target = this.formationPosition;
    }
 
    public moveLeft(elapsedTime: number){
