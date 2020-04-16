@@ -14,13 +14,16 @@ export default class MainMenu extends Component<{}, {menu: string}, {}> {
       this.menuMusic = new Audio();
       this.menuMusic.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/galaga-music.mp3";
       this.menuMusic.loop = true; 
-      this.menuMusic.volume = 0;
+      this.menuMusic.volume = 0.7;
    }
 
 
    componentDidMount(){
-   
-      setTimeout(()=>{this.menuMusic.play()}, 1000)
+      // this.menuMusic.play();
+   }
+
+   playMusic = () =>{
+      this.menuMusic.play();
    }
 
    showControls = () => {
@@ -53,6 +56,7 @@ export default class MainMenu extends Component<{}, {menu: string}, {}> {
                <li className="clickable-menu" onClick={this.showControls}>Controls</li>
                <li className="clickable-menu" onClick={this.showHighscores}>High Scores</li>
                <li className="clickable-menu" onClick={this.showCredits}>Credits</li>
+               <li className="clickable-menu" onClick={this.playMusic}>Play the music!</li>
             </ul>
          </div>
       )
