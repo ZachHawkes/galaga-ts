@@ -45,9 +45,18 @@ export default class GameModel {
    }
 
    public registerInput(){
-      this.keyboardHandler.registerCommand('ArrowLeft', this.spaceship.moveLeft, false);
-      this.keyboardHandler.registerCommand('ArrowRight', this.spaceship.moveRight, false);
-      this.keyboardHandler.registerCommand(' ', this.spaceship.fire, true)
+      let controls = JSON.parse(window.localStorage.getItem('galaga-controls'));
+      console.log(controls)
+      if(!controls){
+         controls = {
+            fire: " ",
+            moveLeft: "ArrowLeft",
+            moveRight: "ArrowRight"
+         }
+      }
+      this.keyboardHandler.registerCommand(controls.moveLeft, this.spaceship.moveLeft, false);
+      this.keyboardHandler.registerCommand(controls.moveRight, this.spaceship.moveRight, false);
+      this.keyboardHandler.registerCommand(controls.fire, this.spaceship.fire, true)
    }
 
    public update(elapsedTime: number){
