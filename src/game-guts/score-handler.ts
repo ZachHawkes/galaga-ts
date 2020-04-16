@@ -35,7 +35,7 @@ export default class ScoreHandler {
    
    private getAccuracy(){
       if(this.hits === 0) return 100;
-      return Math.round((this.hits / this.shots) * 100);
+      return ((this.hits / this.shots) * 100).toFixed(2);
    }
 
    public getScoreObject = (): {score: number, hits: number; shots: number; level: number;} =>{

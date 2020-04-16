@@ -36,7 +36,7 @@ export default function(props: {scoreObject: IScoreObject}){
             <li className="title score">Level: {level}</li>
             <li className="title score">Enemies Hit: {hits}</li>
             <li className="title score">Shots Fired: {shots}</li>
-            <li className="title score">Accuracy: {(Math.round(hits / shots) * 100) + "%"}</li>
+            <li className="title score">Accuracy: {(Number(hits / shots) * 100).toFixed(2) + "%"}</li>
          <input type="text" placeholder="Name" id="name" ref={inputValue}></input>
          <button onClick={saveScore} ref={button}>Submit Score</button>
          </ul>

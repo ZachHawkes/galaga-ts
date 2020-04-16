@@ -69,6 +69,17 @@ export default class Controls extends Component<{}, IControls, {} > {
       window.addEventListener('keydown', callback)
    }
 
+   setDefaults = () =>{
+      const newState = {
+         fire: " ",
+         moveLeft: "ArrowLeft",
+         moveRight: "ArrowRight",
+      }
+      this.controls = newState; 
+      window.localStorage.setItem('galaga-controls', JSON.stringify(this.controls))
+      this.setState(newState);
+   }
+
 
 
    render(){
@@ -79,6 +90,7 @@ export default class Controls extends Component<{}, IControls, {} > {
                <li className="clickable-menu" onClick={this.setFire}>Fire: {this.state.fire === " " ? "Spacebar" : this.state.fire}</li>
                <li className="clickable-menu" onClick={this.setMoveLeft}>Move Left: {this.state.moveLeft}</li>
                <li className="clickable-menu" onClick={this.setMoveRight}>Move Right: {this.state.moveRight}</li>
+               <li className="clickable-menu" onClick={this.setDefaults}>Reset to Defaults</li>
             </ul>
          </div>
       )
