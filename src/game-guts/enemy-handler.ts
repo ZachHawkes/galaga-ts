@@ -1,4 +1,5 @@
 import Enemy from "./enemies";
+import EnemyMissile from "./enemy-missile";
 
 interface IPosition {
    x: number, 
@@ -20,6 +21,7 @@ export default class EnemyHandler {
    private timeToEnter: number;
    private entryComplete: boolean;
    private entryQueue: Enemy[];
+   private missileArray: EnemyMissile[];
 
    constructor(imgHandler, graphics, particleSystem, getSpaceshipPosition, scores){
       this.imageHandler = imgHandler;
@@ -35,9 +37,12 @@ export default class EnemyHandler {
       this.attackTime = 0;
       this.timeToEnter = 0; 
       this.entryComplete = false; 
+      this.missileArray = [];
    }
 
    private buildEnemies(enemyRows: number, enemiesPerRow: number){
+      this.entryComplete = false; 
+      this.timeToEnter = 0;
       let newEnemies = [];
       for(let rows = 0; rows < enemyRows; rows++){
          let enemyRow = []; 
@@ -82,7 +87,53 @@ export default class EnemyHandler {
       let secondIndextToAttack = Math.floor(Math.random() * this.enemies[indexToAttack].length);
       if(this.enemies[indexToAttack][secondIndextToAttack] && !this.enemies[indexToAttack][secondIndextToAttack].isAttacking()){
          this.enemies[indexToAttack][secondIndextToAttack].attack(spaceshipPosition);
+         const enemyInfo = this.enemies[indexToAttack][secondIndextToAttack].getEnemyInfo();
+         if(Math.random() * 10 < (2 + this.scoreHandler.getLevel()))this.fireMissile(spaceshipPosition, enemyInfo.position, enemyInfo.rotation);
       }
+   }
+
+   private fireMissile(target, position, rotation){
+      let result = this.computeAngle(position, rotation + (Math.PI / 2), target);
+      const definiteTarget = JSON.parse(JSON.stringify(position))
+      this.missileArray.push(new EnemyMissile(definiteTarget, result.angle, this.graphics, this.particleSystem));
+   }
+
+   public computeAngle(position: IPosition, rotation, target: IPosition): {angle: number, crossProduct: number}{
+      let v1 = {
+         x : Math.cos(rotation + (Math.PI / 2)),
+         y : Math.sin(rotation + (Math.PI / 2))
+      };
+      let v2 = {
+         x : position.x - target.x,
+         y : position.y - target.y
+      };
+
+      let v2len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+      v2.x /= v2len;
+      v2.y /= v2len;
+
+      let dp = v1.x * v2.x + v1.y * v2.y;
+      let angle = Math.acos(dp);
+      //
+      // It is possible to get a NaN result, when that happens, set the angle to
+      // 0 so that any use of it doesn't have to check for NaN.
+      if (isNaN(angle)) {
+         angle = 0;
+      }
+
+      //
+      // Get the cross product of the two vectors so we can know
+      // which direction to rotate.
+      let cp = this.crossProduct(v1, v2);
+
+      return {
+         angle : angle,
+         crossProduct : cp
+      };
+   }
+
+   private crossProduct(v1: IPosition, v2: IPosition){
+      return (v1.x * v2.y) - (v1.y * v2.x);
    }
 
    public getCollisionInfo(): {center: IPosition, radius: number}[][]{
@@ -98,19 +149,12 @@ export default class EnemyHandler {
    }
 
    public getMissileCollisionInfo(){
-      let collisionInfo = this.enemies.map((row, rowIndex)=>{
-         return row.map((enemy, enemyIndex)=>{
-            return {
-               collisionInfo: enemy.getMissileCollisionInfo(),
-               index: [rowIndex, enemyIndex],
-            }
-         })
-      }).flat().filter(missileInfo=>missileInfo.collisionInfo !== undefined);
+      let collisionInfo = this.missileArray.map(missile=>missile.getCollisionInfo());
       return collisionInfo;
    }
 
    public destroyMissile(indexInfo){
-      this.enemies[indexInfo[0]][indexInfo[1]].destroyMissile();
+      this.missileArray[indexInfo].destroyMissile();
    }
 
    public areAllEnemiesDown(){
@@ -142,6 +186,7 @@ export default class EnemyHandler {
       } else {
          this.entryComplete = true; 
          this.clearanceToAttack = true; 
+         this.entryQueue = undefined;
       }
    }
 
@@ -163,6 +208,7 @@ export default class EnemyHandler {
          }
          if(this.areAllEnemiesDown()){
             this.buildEnemies(5, 8)
+            this.scoreHandler.increaseLevel();
          }
          this.hoverEnemies(elapsedTime)
       } else {
@@ -176,11 +222,13 @@ export default class EnemyHandler {
       this.enemies.forEach(row=>{
          row.forEach(enemy=> enemy.update(elapsedTime));
       });
+      this.missileArray.forEach(missile=>missile.update(elapsedTime))
    }
 
    public render(){
       this.enemies.forEach(row=>{
          row.forEach(enemy=> enemy.render());
       });
+      this.missileArray.forEach(missile=>missile.render())
    }
 }

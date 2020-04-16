@@ -26,7 +26,7 @@ export default class GameModel {
       this.imageHandler = new ImageHandler(imageArray);
       this.particleSystem = new ParticleSystem(this.graphics);
       this.keyboardHandler = new KeyboardHandler();
-      this.scoreHandler = new ScoreHandler();
+      this.scoreHandler = new ScoreHandler(this.graphics);
       this.spaceship = new Spaceship(this.graphics, this.imageHandler.getImage('spaceship'), {x: this.canvas.width / 2, y: this.canvas.height - 100}, {x: 50, y: 50}, this.particleSystem, this.scoreHandler)
       this.enemiesHandler = new EnemiesHandler(this.imageHandler, this.graphics, this.particleSystem, this.spaceship.getPosition, this.scoreHandler);
       this.collisionHandler = new CollisionHandler(this.spaceship, this.enemiesHandler);
@@ -60,6 +60,7 @@ export default class GameModel {
       this.particleSystem.render();
       this.spaceship.render();
       this.enemiesHandler.render();
+      this.scoreHandler.render();
    }
 
 }

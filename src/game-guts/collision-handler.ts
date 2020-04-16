@@ -47,9 +47,9 @@ export default class CollisionHandler {
       
       // using the for loop so I can return out of it early
       for(let i = 0; i < missileInfo.length; i++){
-         if(this.lineCircleIntersection(missileInfo[i].collisionInfo.pt1, missileInfo[i].collisionInfo.pt2, spaceshipInfo)){
+         if(this.lineCircleIntersection(missileInfo[i].pt1, missileInfo[i].pt2, spaceshipInfo)){
             this.spaceShip.destroySpaceship();
-            this.enemyHandler.destroyMissile(missileInfo[i].index)
+            this.enemyHandler.destroyMissile(i)
             return true;
          }
       }

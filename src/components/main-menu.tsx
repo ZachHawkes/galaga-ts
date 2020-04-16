@@ -19,7 +19,8 @@ export default class MainMenu extends Component<{}, {menu: string}, {}> {
 
 
    componentDidMount(){
-      this.menuMusic.play()
+   
+      setTimeout(()=>{this.menuMusic.play()}, 1000)
    }
 
    showControls = () => {

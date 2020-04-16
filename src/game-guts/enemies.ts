@@ -53,7 +53,7 @@ export default class Enemy {
    }
 
    // taken profPorkins github :)
-   private computeAngle(position: IPosition, rotation, target: IPosition): {angle: number, crossProduct: number}{
+   public computeAngle(position: IPosition, rotation, target: IPosition): {angle: number, crossProduct: number}{
       let v1 = {
          x : Math.cos(rotation + (Math.PI / 2)),
          y : Math.sin(rotation + (Math.PI / 2))
@@ -116,13 +116,13 @@ export default class Enemy {
    public attack(spaceshipPosition: IPosition){
       this.attacking = true;  
       this.setTarget(spaceshipPosition)
-      if(Math.random() < 0.6)this.fireMissile(spaceshipPosition);
    }
 
-   private fireMissile(target){
-      let result = this.computeAngle(this.position, this.rotation + (Math.PI / 2), target);
-      const definiteTarget = JSON.parse(JSON.stringify(this.position))
-      this.missile = new EnemyMissile(definiteTarget, result.angle, this.graphics, this.particleSystem);
+   public getEnemyInfo(){
+      return {
+         position: this.position,
+         rotation: this.rotation,
+      }
    }
 
    public getCollisionInfo(){
@@ -141,10 +141,6 @@ export default class Enemy {
       this.explosionSound.play();
    }
 
-   public destroyMissile(){
-      this.missile = undefined; 
-   }
-
    public isAlive(){
       return this.alive; 
    }
@@ -154,7 +150,6 @@ export default class Enemy {
    }
 
    public enterScreen(){
-      console.log("Entering")
       this.target = this.formationPosition;
    }
 
@@ -209,20 +204,6 @@ export default class Enemy {
             this.attackTime = 0; 
          }
          this.rotation = 0;
-      }
-      // bug here -- missile stays with enemy until enemy stops attacking. NO idea why yet.
-      // if(this.attacking){
-      //    this.attackTime += elapsedTime; 
-      //    if(this.attackTime > 100){
-      //       this.fireMissile(this.spaceShipPosition);
-      //    }
-      // }
-      if(this.missile && this.missile.isAlive()){
-         this.missile.update(elapsedTime);
-         if(!this.missile.isAlive()) {
-            this.missile = undefined; 
-            console.log("The missile died!")
-         }
       }
    }
 
