@@ -88,7 +88,7 @@ export default class EnemyHandler {
       if(this.enemies[indexToAttack][secondIndextToAttack] && !this.enemies[indexToAttack][secondIndextToAttack].isAttacking()){
          this.enemies[indexToAttack][secondIndextToAttack].attack(spaceshipPosition);
          const enemyInfo = this.enemies[indexToAttack][secondIndextToAttack].getEnemyInfo();
-         if(Math.random() * 10 < (2 + this.scoreHandler.getLevel()))this.fireMissile(spaceshipPosition, enemyInfo.position, enemyInfo.rotation);
+         if(Math.random() * 10 < (3 + this.scoreHandler.getLevel()))this.fireMissile(spaceshipPosition, enemyInfo.position, enemyInfo.rotation);
       }
    }
 
