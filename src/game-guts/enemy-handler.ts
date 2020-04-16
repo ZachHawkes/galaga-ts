@@ -47,17 +47,23 @@ export default class EnemyHandler {
       for(let rows = 0; rows < enemyRows; rows++){
          let enemyRow = []; 
          let yPosition = 150 + (rows *  50);
-         let image; 
+         let image;
+         let secondImage;  
+         let type; 
          if(rows === 1 || rows === 2){
             image = this.imageHandler.getImage('butterfly')
+            type = 'butterfly'
          } else if(rows === 3 || rows === 4){
             image = this.imageHandler.getImage('bee')
+            type = "bee"; 
          } else {
-            image = this.imageHandler.getImage('galaga')
+            image = this.imageHandler.getImage('bossGalaga')
+            secondImage = this.imageHandler.getImage('galaga')
+            type = "galaga"
          }
          for(let rowEnemies = 1; rowEnemies <= enemiesPerRow; rowEnemies++){
             let side = rows % 2 === 0 ? 1200 : -80;
-            enemyRow.push(new Enemy(image, {x: side, y: 800}, {x: 300 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem, this.doneAttacking, this.scoreHandler))
+            enemyRow.push(new Enemy(type, image, {x: side, y: 800}, {x: 300 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem, this.doneAttacking, this.scoreHandler, secondImage))
          }
          newEnemies.push(enemyRow);
       }

@@ -19,8 +19,10 @@ export default class Spaceship {
    private constructionTime: number; 
    private lives: number; 
    private notifyEnemyHandler: any;
-   private missileFireSound: any; 
-   private deathCry: any;
+   private missileFireSound: HTMLAudioElement; 
+   private deathCry: HTMLAudioElement;
+   private newFighter: HTMLAudioElement;
+   private newLifeScores: number[]; 
 
    constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem, scores){
       this.graphics = graphics;
@@ -33,12 +35,15 @@ export default class Spaceship {
       this.scoreHandler = scores;
       this.alive = true; 
       this.constructionTime = 0; 
-      this.lives = 0;
+      this.lives = 2;
 
       this.missileFireSound = new Audio();
       this.missileFireSound.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/missileFire.mp3";
       this.deathCry = new Audio();
       this.deathCry.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/enemyExplosion.mp3";
+      this.newFighter = new Audio();
+      this.newFighter.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/success.mp3"
+      this.newLifeScores = [10000, 50000, 100000, 300000, 500000, 1000000]; 
    }
 
    public render(){
@@ -62,6 +67,13 @@ export default class Spaceship {
       const updateArray = this.missileArray.filter(missile=>missile.isAlive())
       updateArray.forEach(missile=>missile.update(elapsedTime));
       this.missileArray = updateArray;
+      let score = this.scoreHandler.getScore() 
+      if(this.newLifeScores.length && score > this.newLifeScores[0]){
+         this.lives++;
+         this.newLifeScores.shift();
+         this.newFighter.play();
+         this.particleSystem.explodeEnemy(this.position, 300, {mean: 0.5, stdev: 0.2}, {mean: 1, stdev: 0.2})
+      }
    }
 
    public constructNewSpaceShip(){

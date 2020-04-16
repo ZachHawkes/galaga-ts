@@ -28,8 +28,11 @@ export default class Enemy {
    private spaceShipPosition: IPosition;
    private scoreHandler: any; 
    private explosionSound: HTMLAudioElement;
+   private type: string; 
+   private hasSheld: boolean; 
+   private unShieldedGalaga: HTMLImageElement;
 
-   constructor(img: HTMLImageElement, pos: IPosition, formPosition: IPosition, graphics, particleSystem, isAttackComplete, scores){
+   constructor(type: string, img: HTMLImageElement, pos: IPosition, formPosition: IPosition, graphics, particleSystem, isAttackComplete, scores, galaga?: HTMLImageElement){
       this.image = img; 
       this.position = pos;
       this.alive = true;
@@ -49,6 +52,11 @@ export default class Enemy {
       this.scoreHandler = scores;
       this.explosionSound = new Audio();
       this.explosionSound.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/secondExplosion.mp3";
+      this.type = type; 
+      if(this.type === "galaga"){
+         this.hasSheld = true; 
+      }
+      this.unShieldedGalaga = galaga;
    }
 
    // taken profPorkins github :)
@@ -132,12 +140,17 @@ export default class Enemy {
    }
 
    public destroyEnemy(){
-      this.particleSystem.explodeEnemy(this.position, 200, {mean: 1, stdev: 0.5}, {mean: 1.5, stdev: 0.3})
-      this.alive = false; 
-      if(this.attacking) this.doneAttacking();
-      this.scoreHandler.enemyHit();
-      this.scoreHandler.enemyDestroyed(this.attacking)
-      this.explosionSound.play();
+      if(!this.hasSheld){
+         this.particleSystem.explodeEnemy(this.position, 200, {mean: 1, stdev: 0.5}, {mean: 1.5, stdev: 0.3})
+         this.alive = false; 
+         if(this.attacking) this.doneAttacking();
+         this.scoreHandler.enemyHit();
+         this.scoreHandler.enemyDestroyed(this.attacking, this.type)
+         this.explosionSound.play();
+      } else {
+         this.hasSheld = false; 
+         this.scoreHandler.enemyHit();
+      }
    }
 
    public isAlive(){
@@ -211,7 +224,11 @@ export default class Enemy {
    }
 
    public render(){
-      this.graphics.drawTexture(this.image, this.position, this.rotation, this.size);
+      if(this.type === "galaga" && !this.hasSheld){
+         this.graphics.drawTexture(this.unShieldedGalaga, this.position, this.rotation, this.size);
+      } else {
+         this.graphics.drawTexture(this.image, this.position, this.rotation, this.size);
+      }
       if(this.missile && this.missile.isAlive()){
          this.missile.render(); 
       }

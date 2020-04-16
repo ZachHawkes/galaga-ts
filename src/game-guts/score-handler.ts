@@ -32,6 +32,10 @@ export default class ScoreHandler {
    public getLevel = () =>{
       return this.level;
    }
+
+   public getScore = () =>{
+      return this.score
+   }
    
    private getAccuracy(){
       if(this.hits === 0) return 100;
@@ -57,9 +61,14 @@ export default class ScoreHandler {
       this.graphics.drawText(levelString, {x: 820, y:900}, "rgb(255,255,255)");
    }
 
-   public enemyDestroyed = (wasAttacking: boolean) =>{
-      const multiplier = wasAttacking ? 3 : 1;
-      this.score += multiplier * 100 * this.level;
+   public enemyDestroyed = (wasAttacking: boolean, type: string) =>{
+      const scoreObject = {
+         galaga: 200, 
+         butterfly: 80,
+         bee: 50,
+      }
+      const multiplier = wasAttacking ? 2 : 1;
+      this.score += multiplier * scoreObject[type] * this.level;
       console.log(this.score)
    }
 }

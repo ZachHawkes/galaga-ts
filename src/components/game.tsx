@@ -5,6 +5,7 @@ import spaceship_small_blue from '../assets/spaceship_small_blue.png';
 import butterfly from "../assets/butterfly.png";
 import bee from "../assets/bee.png";
 import galagaBoss from "../assets/galagaBoss.png";
+import bossgalaga from "../assets/boss-galaga.png";
 
 
 export default class Game extends Component<{}, {isGameOver: boolean}, {}> {
@@ -17,6 +18,7 @@ export default class Game extends Component<{}, {isGameOver: boolean}, {}> {
    private gameMusic: HTMLAudioElement;
    private bee: any;
    private galagaBoss: any;
+   private bossGalaga: any; 
 
    constructor(props: any){
       super(props);
@@ -25,6 +27,7 @@ export default class Game extends Component<{}, {isGameOver: boolean}, {}> {
       this.butterfly = React.createRef();
       this.bee = React.createRef();
       this.galagaBoss = React.createRef();
+      this.bossGalaga = React.createRef();
       this.previousTime = performance.now();
       this.state = {
          isGameOver: false,
@@ -48,6 +51,7 @@ export default class Game extends Component<{}, {isGameOver: boolean}, {}> {
       imageArray.push({name: "butterfly", image: this.butterfly.current});
       imageArray.push({name: "bee", image: this.bee.current});
       imageArray.push({name: "galaga", image: this.galagaBoss.current});
+      imageArray.push({name: "bossGalaga", image: this.bossGalaga.current});
       return imageArray
    }
 
@@ -74,6 +78,7 @@ export default class Game extends Component<{}, {isGameOver: boolean}, {}> {
                <img src={butterfly} alt="butterfly-enemy" ref={this.butterfly} />
                <img src={bee} alt="bee-enemy" ref={this.bee} />
                <img src={galagaBoss} alt="galaga-enemy" ref={this.galagaBoss} />
+               <img src={bossgalaga} alt="galaga-enemy" ref={this.bossGalaga} />>
             </div>
          )
       } else {
