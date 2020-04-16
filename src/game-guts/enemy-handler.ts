@@ -28,7 +28,7 @@ export default class EnemyHandler {
       this.scoreHandler = scores;
       this.shouldMoveLeft = true; 
       this.clearanceToAttack = false; 
-      this.buildEnemies(4, 10);
+      this.buildEnemies(5, 8);
       this.moveTime = 0; 
       this.hasAttacked = 0; 
       this.getSpaceShipPos = getSpaceshipPosition;
@@ -42,14 +42,21 @@ export default class EnemyHandler {
       for(let rows = 0; rows < enemyRows; rows++){
          let enemyRow = []; 
          let yPosition = 150 + (rows *  50);
+         let image; 
+         if(rows === 1 || rows === 2){
+            image = this.imageHandler.getImage('butterfly')
+         } else if(rows === 3 || rows === 4){
+            image = this.imageHandler.getImage('bee')
+         } else {
+            image = this.imageHandler.getImage('galaga')
+         }
          for(let rowEnemies = 1; rowEnemies <= enemiesPerRow; rowEnemies++){
             let side = rows % 2 === 0 ? 1200 : -80;
-            enemyRow.push(new Enemy(this.imageHandler.getImage('butterfly'), {x: side, y: 800}, {x: 200 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem, this.doneAttacking, this.scoreHandler))
+            enemyRow.push(new Enemy(image, {x: side, y: 800}, {x: 300 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem, this.doneAttacking, this.scoreHandler))
          }
          newEnemies.push(enemyRow);
       }
       this.enemies = newEnemies;
-      // this.clearanceToAttack = true; 
    }
 
    public doneAttacking = () =>{
@@ -155,7 +162,7 @@ export default class EnemyHandler {
             this.initiateAttack();
          }
          if(this.areAllEnemiesDown()){
-            this.buildEnemies(4, 10)
+            this.buildEnemies(5, 8)
          }
          this.hoverEnemies(elapsedTime)
       } else {
