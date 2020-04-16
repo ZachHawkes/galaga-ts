@@ -22,7 +22,7 @@ export default class HighScores extends Component {
 
    render(){
       return (
-         <div>
+         <div className="game-over">
             <ul>
                <li className="title">HighScores</li>
                {this.renderScores()}

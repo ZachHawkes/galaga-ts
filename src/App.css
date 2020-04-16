@@ -62,11 +62,41 @@ ul {
 }
 
 .canvas {
-  width: 50%
+  width: 100%
 }
 
 .showImage {
   display: block;
   width: 500px;
   margin: auto; 
+}
+
+.game-back {
+  width: 50%;
+  margin: auto; 
+  margin-top: 10px; 
+}
+
+.game-over {
+  height: 50%;
+}
+
+.score {
+  border-radius: 5px;
+  width: 50%;
+  margin: auto;
+  padding: 5px;  
+  margin-bottom: 5px; 
+}
+
+.border-screen {
+  border-style: solid;
+  border-width: 3px; 
+  border-color: white; 
+}
+
+.game-menu {
+  width: unset; 
+  margin: unset; 
+  padding: 20px; 
 }

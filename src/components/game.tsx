@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import GameModel from "../game-guts/game-model";
+import GameOverScreen from "./game-over"
 import spaceship_small_blue from '../assets/spaceship_small_blue.png';
 import butterfly from "../assets/butterfly.png";
 import bee from "../assets/bee.png";
 import galagaBoss from "../assets/galagaBoss.png";
 
 
-export default class Game extends Component {
+export default class Game extends Component<{}, {isGameOver: boolean}, {}> {
    private canvas: any;
    private gameModel: GameModel;
    private spaceship: any;
@@ -27,7 +28,6 @@ export default class Game extends Component {
       this.previousTime = performance.now();
       this.state = {
          isGameOver: false,
-         level: 1,
       }
       this.gameOver = false; 
       this.gameMusic = new Audio();
@@ -57,20 +57,27 @@ export default class Game extends Component {
       this.gameModel.processInput(elapsedTime);
       this.gameModel.update(elapsedTime);
       this.gameModel.render();
+      if(this.gameModel.isGameOver()){
+         this.setState({isGameOver: true})
+      }
 
-      requestAnimationFrame(this.gameloop)
+      if(!this.state.isGameOver) requestAnimationFrame(this.gameloop)
    }
 
 
    render(){
-      return(
-         <div>
-            <canvas ref={this.canvas} width='1024' height='1024' className="canvas"></canvas>
-            <img src={spaceship_small_blue} alt="spaceship" ref={this.spaceship} />
-            <img src={butterfly} alt="butterfly-enemy" ref={this.butterfly} />
-            <img src={bee} alt="bee-enemy" ref={this.bee} />
-            <img src={galagaBoss} alt="galaga-enemy" ref={this.galagaBoss} />
-         </div>
-      )
+      if(!this.state.isGameOver){
+         return(
+            <div>
+               <canvas ref={this.canvas} width='1024' height='1024' className="canvas"></canvas>
+               <img src={spaceship_small_blue} alt="spaceship" ref={this.spaceship} />
+               <img src={butterfly} alt="butterfly-enemy" ref={this.butterfly} />
+               <img src={bee} alt="bee-enemy" ref={this.bee} />
+               <img src={galagaBoss} alt="galaga-enemy" ref={this.galagaBoss} />
+            </div>
+         )
+      } else {
+         return <GameOverScreen scoreObject={this.gameModel.getScores()} />
+      }
    }
 }

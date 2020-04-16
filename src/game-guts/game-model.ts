@@ -18,6 +18,7 @@ export default class GameModel {
    private enemiesHandler: EnemiesHandler;
    private collisionHandler: CollisionHandler;
    private scoreHandler: ScoreHandler;
+   private gameOver: boolean; 
 
    constructor(canvas:HTMLCanvasElement, imageArray: any){
       this.canvas = canvas; 
@@ -32,6 +33,15 @@ export default class GameModel {
       this.collisionHandler = new CollisionHandler(this.spaceship, this.enemiesHandler);
       this.registerInput();
       this.spaceship.registerEnemyNotification(this.enemiesHandler.resumeAttacking);
+      this.gameOver = false; 
+   }
+
+   public isGameOver = () =>{
+      return this.gameOver; 
+   }
+
+   public getScores = (): {score: number, hits: number; shots: number; level: number;} => {
+      return this.scoreHandler.getScoreObject();
    }
 
    public registerInput(){
@@ -49,6 +59,9 @@ export default class GameModel {
       this.collisionHandler.checkSpaceshipMissiles();
       let gameStatus = this.collisionHandler.checkEnemyMissiles();
       if(gameStatus) this.enemiesHandler.stopAttacking();
+      if(gameStatus && this.spaceship.getLives() === 0){
+         this.gameOver = true; 
+      }
    }
    
    public processInput(elapsedTime: number){

@@ -4,12 +4,12 @@ import HighScores from "./high-scores";
 import Game from "./game";
 import Galaga from "../assets/galaga.png"
 
-export default class MainMenu extends Component<{}, {menu: string}, {}> {
+export default class MainMenu extends Component<{menu: string}, {menu: string}, {}> {
    private menuMusic: HTMLAudioElement;
    constructor(props){
       super(props);
       this.state = {
-         menu: "mainMenu"
+         menu: this.props.menu
       }
       this.menuMusic = new Audio();
       this.menuMusic.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/galaga-music.mp3";
@@ -56,7 +56,7 @@ export default class MainMenu extends Component<{}, {menu: string}, {}> {
                <li className="clickable-menu" onClick={this.showControls}>Controls</li>
                <li className="clickable-menu" onClick={this.showHighscores}>High Scores</li>
                <li className="clickable-menu" onClick={this.showCredits}>Credits</li>
-               <li className="clickable-menu" onClick={this.playMusic}>Play the music!</li>
+               <li className="clickable-menu" onClick={this.playMusic}>Turn On Music</li>
             </ul>
          </div>
       )
@@ -90,13 +90,21 @@ export default class MainMenu extends Component<{}, {menu: string}, {}> {
             </ul>
          </div>
       )
+      const game = (
+         <div className="menu">
+            <Game/>
+            <ul>
+               <li className="clickable-menu game-back" onClick={this.showMainMenu}>Back to Main Menu</li>
+            </ul>
+         </div>
+      )
 
 
       const renderObject = {
          mainMenu,
          controls,
          highScores,
-         game: <Game />, 
+         game, 
          credits
       }
 

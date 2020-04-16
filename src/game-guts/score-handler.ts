@@ -38,6 +38,15 @@ export default class ScoreHandler {
       return Math.round((this.hits / this.shots) * 100);
    }
 
+   public getScoreObject = (): {score: number, hits: number; shots: number; level: number;} =>{
+      return {
+         score: this.score,
+         hits: this.hits,
+         shots: this.shots,
+         level: this.level,
+      }
+   }
+
    public render(){
       let scoreString = `Score: ${this.score}`
       let accuracyString = `Accuracy: ${this.getAccuracy()}%`;

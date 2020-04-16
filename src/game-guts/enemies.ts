@@ -49,7 +49,6 @@ export default class Enemy {
       this.scoreHandler = scores;
       this.explosionSound = new Audio();
       this.explosionSound.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/secondExplosion.mp3";
-      console.log(this.position)
    }
 
    // taken profPorkins github :)

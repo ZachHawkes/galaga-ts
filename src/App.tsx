@@ -4,7 +4,7 @@ import MainMenu from "./components/main-menu";
 function App() {
   return (
     <div className="App">
-      <MainMenu />
+      <MainMenu menu="mainMenu"/>
     </div>
   );
 }

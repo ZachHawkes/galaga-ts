@@ -33,7 +33,7 @@ export default class Spaceship {
       this.scoreHandler = scores;
       this.alive = true; 
       this.constructionTime = 0; 
-      this.lives = 3;
+      this.lives = 0;
 
       this.missileFireSound = new Audio();
       this.missileFireSound.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/missileFire.mp3";
@@ -43,7 +43,7 @@ export default class Spaceship {
 
    public render(){
       if(this.alive) this.graphics.drawTexture(this.image, this.position, 0, this.size);
-      for(let i = 0; i < this.lives - 1; i++){
+      for(let i = 0; i < this.lives; i++){
          this.graphics.drawTexture(this.image, {x: this.size.x + (i * (this.size.x + 10)), y: this.canvasSize - (this.size.y)}, 0, this.size);
       }
       this.missileArray.forEach(missle=>missle.render())
@@ -65,6 +65,7 @@ export default class Spaceship {
    }
 
    public constructNewSpaceShip(){
+      console.log(this.lives)
       this.position = {
          x: this.canvasSize / 2,
          y: this.canvasSize - 100,
@@ -76,6 +77,10 @@ export default class Spaceship {
    // this is quick and dirty because I need it to work. 
    public registerEnemyNotification(handler){
       this.notifyEnemyHandler = handler; 
+   }
+
+   public getLives = () =>{
+      return this.lives; 
    }
 
    public fire = () =>{
