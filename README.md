@@ -1,44 +1,34 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+Ensure Node.js is installed (The newer the better). Navigate to the project folder in terminal.
+`yarn && yarn start` or `npm i && npm start` will build and launch the Game.
 
-In the project directory, you can run:
+## Known Bugs
 
-### `yarn start`
+1. Clicking Back while in the middle of the game messes up the sound
+2. Enemies fire missiles the moment they start attacking obscuring the attack and making it seem unnatural
+3. And probably a lot more that I'm not aware of or can't think of right now.
+4. Game window is not adequately dynamic enough to handle all window sizes and resolution.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Things I want to accomplish with this project
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+This project was created for CS5410 Final Project. I had fun with this project and want to keep working on it.
+I had to crunch really hard to finish this project on time. As a result, I had to write some code that wasn't structured as well as I would have liked. 
+So here are some improvements I want to make.
 
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Extract move to point functionality from the enemy class and put it in helper functions.
+   1. This will allow me to use the functionality in the missile and enemy classes without duplicating code.
+   2. It will also clean up the Enemy class and make the code clearer and more concise.
+2. I want to create a Mediator object to handle communication between classes.
+   1. Currently all classes are tightly coupled. I have to pass functions into the constructor of each class currently for communication between classes.
+   2. This will centralize logic and make communication between classes easier to follow and manage.
+   3. This will also open the door to possibly adding save games later.
+3. I also want to go through all of the code and notate bad code as I find it so I can change it later.
+4. Then it will be time to add some more features.
+   1. More complete pathing for the enemies
+   2. Challenge stages.
+   3. Better and more complex sound.
+   4. Some alternate and fun weapons for both enemy and player.
+   5. Animated sprites.
+   6. Maybe extract out copywrighted material and make the game my own.
+   7. Should be able to adapt the game to mobile without too much trouble.

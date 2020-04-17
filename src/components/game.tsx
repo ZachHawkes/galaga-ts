@@ -78,7 +78,7 @@ export default class Game extends Component<{}, {isGameOver: boolean}, {}> {
                <img src={butterfly} alt="butterfly-enemy" ref={this.butterfly} />
                <img src={bee} alt="bee-enemy" ref={this.bee} />
                <img src={galagaBoss} alt="galaga-enemy" ref={this.galagaBoss} />
-               <img src={bossgalaga} alt="galaga-enemy" ref={this.bossGalaga} />>
+               <img src={bossgalaga} alt="galaga-enemy" ref={this.bossGalaga} />
             </div>
          )
       } else {
