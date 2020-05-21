@@ -7,8 +7,8 @@ Ensure Node.js is installed (The newer the better). Navigate to the project fold
 
 1. Clicking Back while in the middle of the game messes up the sound
 2. Enemies fire missiles the moment they start attacking obscuring the attack and making it seem unnatural
-3. And probably a lot more that I'm not aware of or can't think of right now.
-4. Game window is not adequately dynamic enough to handle all window sizes and resolution.
+3. Game window is not adequately dynamic enough to handle all window sizes and resolution.
+4. And probably many many more.
 
 ## Things I want to accomplish with this project
 
@@ -30,5 +30,5 @@ So here are some improvements I want to make.
    3. Better and more complex sound.
    4. Some alternate and fun weapons for both enemy and player.
    5. Animated sprites.
-   6. Maybe extract out copywrighted material and make the game my own.
-   7. Should be able to adapt the game to mobile without too much trouble.
+   6. Maybe extract out copywrited material and make the game my own.
+   7. Port the game to mobile.
