@@ -31,8 +31,9 @@ export default class Enemy {
    private type: string; 
    private hasSheld: boolean; 
    private unShieldedGalaga: HTMLImageElement;
+   private mediator: any; 
 
-   constructor(type: string, img: HTMLImageElement, pos: IPosition, formPosition: IPosition, graphics, particleSystem, isAttackComplete, scores, galaga?: HTMLImageElement){
+   constructor(type: string, img: HTMLImageElement, pos: IPosition, formPosition: IPosition, graphics, particleSystem, isAttackComplete, mediator ,galaga?: HTMLImageElement){
       this.image = img; 
       this.position = pos;
       this.alive = true;
@@ -49,7 +50,6 @@ export default class Enemy {
       this.formationPosition = formPosition
       this.doneAttacking = isAttackComplete;
       this.attackTime = 0; 
-      this.scoreHandler = scores;
       this.explosionSound = new Audio();
       this.explosionSound.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/secondExplosion.mp3";
       this.type = type; 
@@ -57,8 +57,11 @@ export default class Enemy {
          this.hasSheld = true; 
       }
       this.unShieldedGalaga = galaga;
+      this.mediator = mediator; 
+
    }
 
+   // the next two methods need to be refactored or removed. DRY is important. 
    // taken profPorkins github :)
    public computeAngle(position: IPosition, rotation, target: IPosition): {angle: number, crossProduct: number}{
       let v1 = {
@@ -144,12 +147,12 @@ export default class Enemy {
          this.particleSystem.explodeEnemy(this.position, 200, {mean: 1, stdev: 0.5}, {mean: 1.5, stdev: 0.3})
          this.alive = false; 
          if(this.attacking) this.doneAttacking();
-         this.scoreHandler.enemyHit();
-         this.scoreHandler.enemyDestroyed(this.attacking, this.type)
+         this.mediator.publishEvent("enemyHit", [])
+         this.mediator.publishEvent("enemyDestroyed", [this.attacking, this.type])
          this.explosionSound.play();
       } else {
          this.hasSheld = false; 
-         this.scoreHandler.enemyHit();
+         this.mediator.publishEvent("enemyHit", [])
       }
    }
 

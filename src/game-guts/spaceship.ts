@@ -23,8 +23,9 @@ export default class Spaceship {
    private deathCry: HTMLAudioElement;
    private newFighter: HTMLAudioElement;
    private newLifeScores: number[]; 
+   private mediator: any; 
 
-   constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem, scores){
+   constructor(graphics: Graphics, spaceshipImage: HTMLImageElement, position:IPosition, size: IPosition, particleSystem: ParticleSystem, scores, mediator){
       this.graphics = graphics;
       this.image = spaceshipImage;
       this.position = position;
@@ -36,6 +37,7 @@ export default class Spaceship {
       this.alive = true; 
       this.constructionTime = 0; 
       this.lives = 2;
+      this.mediator = mediator; 
 
       this.missileFireSound = new Audio();
       this.missileFireSound.src = "https://cs5410-galaga.s3-us-west-2.amazonaws.com/missileFire.mp3";
@@ -61,6 +63,7 @@ export default class Spaceship {
             this.lives--;
             this.constructNewSpaceShip();
             this.notifyEnemyHandler();
+            this.mediator.publishEvent('resumeAttacking', []);
             this.constructionTime = 0;
          }
       }
@@ -100,6 +103,7 @@ export default class Spaceship {
          const missile = new SpaceshipMissile({x: this.position.x, y: this.position.y - 10}, this.graphics, this.particleSystem);
          this.missileArray.push(missile)
          this.scoreHandler.shotFired();
+         this.mediator.publishEvent("shotFired", [])
          this.missileFireSound.volume = 0.1;
          this.missileFireSound.currentTime = 0;
          this.missileFireSound.play();

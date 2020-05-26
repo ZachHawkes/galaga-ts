@@ -6,6 +6,7 @@ import ParticleSystem from "./particle-system";
 import EnemiesHandler from "./enemy-handler";
 import CollisionHandler from "./collision-handler";
 import ScoreHandler from "./score-handler";
+import Mediator from "./mediator";
 
 export default class GameModel {
    private canvas: HTMLCanvasElement;
@@ -19,6 +20,7 @@ export default class GameModel {
    private collisionHandler: CollisionHandler;
    private scoreHandler: ScoreHandler;
    private gameOver: boolean; 
+   private mediator: Mediator;
 
    constructor(canvas:HTMLCanvasElement, imageArray: any){
       this.canvas = canvas; 
@@ -27,12 +29,28 @@ export default class GameModel {
       this.imageHandler = new ImageHandler(imageArray);
       this.particleSystem = new ParticleSystem(this.graphics);
       this.keyboardHandler = new KeyboardHandler();
-      this.scoreHandler = new ScoreHandler(this.graphics);
-      this.spaceship = new Spaceship(this.graphics, this.imageHandler.getImage('spaceship'), {x: this.canvas.width / 2, y: this.canvas.height - 100}, {x: 50, y: 50}, this.particleSystem, this.scoreHandler)
-      this.enemiesHandler = new EnemiesHandler(this.imageHandler, this.graphics, this.particleSystem, this.spaceship.getPosition, this.scoreHandler);
+      this.mediator = new Mediator(); 
+      this.scoreHandler = new ScoreHandler(this.graphics, this.mediator);
+      this.spaceship = new Spaceship(
+         this.graphics,
+         this.imageHandler.getImage('spaceship'),
+         {x: this.canvas.width / 2, y: this.canvas.height - 100},
+         {x: 50, y: 50},
+         this.particleSystem,
+         this.scoreHandler,
+         this.mediator,
+      )
+      this.enemiesHandler = new EnemiesHandler(
+         this.imageHandler,
+         this.graphics,
+         this.particleSystem,
+         this.spaceship.getPosition,
+         this.mediator,
+      );
       this.collisionHandler = new CollisionHandler(this.spaceship, this.enemiesHandler);
       this.registerInput();
       this.spaceship.registerEnemyNotification(this.enemiesHandler.resumeAttacking);
+      this.mediator.addEvent("resumeAttacking", this.enemiesHandler.resumeAttacking)
       this.gameOver = false; 
    }
 
@@ -46,7 +64,6 @@ export default class GameModel {
 
    public registerInput(){
       let controls = JSON.parse(window.localStorage.getItem('galaga-controls'));
-      console.log(controls)
       if(!controls){
          controls = {
             fire: " ",
