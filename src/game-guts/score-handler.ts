@@ -6,13 +6,20 @@ export default class ScoreHandler {
    private hits: number;
    private level: number;
    private graphics: any;
+   private mediator: any;
 
-   constructor(graphics){
+   constructor(graphics, mediator){
       this.score = 0; 
       this.shots = 0; 
       this.hits = 0; 
       this.level = 1;
       this.graphics = graphics;
+      this.mediator = mediator
+      this.mediator.addEvent("enemyDestroyed", this.enemyDestroyed);
+      this.mediator.addEvent("enemyHit", this.enemyHit);
+      this.mediator.addEvent("shotFired", this.shotFired);
+      this.mediator.addEvent("levelUp", this.increaseLevel);
+      this.mediator.addEvent("getScore", this.getScore)
    }
 
    public shotFired = ()=>{
@@ -26,7 +33,6 @@ export default class ScoreHandler {
 
    public increaseLevel = ()=>{
       this.level++;
-      console.log(this.level)
    }
 
    public getLevel = () =>{

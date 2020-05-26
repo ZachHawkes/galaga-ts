@@ -22,14 +22,16 @@ export default class EnemyHandler {
    private entryComplete: boolean;
    private entryQueue: Enemy[];
    private missileArray: EnemyMissile[];
+   private mediator: any; 
+   private level: number; 
 
-   constructor(imgHandler, graphics, particleSystem, getSpaceshipPosition, scores){
+   constructor(imgHandler, graphics, particleSystem, getSpaceshipPosition, mediator){
       this.imageHandler = imgHandler;
       this.graphics = graphics; 
       this.particleSystem = particleSystem;
-      this.scoreHandler = scores;
       this.shouldMoveLeft = true; 
       this.clearanceToAttack = false; 
+      this.mediator = mediator;
       this.buildEnemies(5, 8);
       this.moveTime = 0; 
       this.hasAttacked = 0; 
@@ -38,6 +40,7 @@ export default class EnemyHandler {
       this.timeToEnter = 0; 
       this.entryComplete = false; 
       this.missileArray = [];
+      this.level = 1; 
    }
 
    private buildEnemies(enemyRows: number, enemiesPerRow: number){
@@ -63,7 +66,7 @@ export default class EnemyHandler {
          }
          for(let rowEnemies = 1; rowEnemies <= enemiesPerRow; rowEnemies++){
             let side = rows % 2 === 0 ? 1200 : -80;
-            enemyRow.push(new Enemy(type, image, {x: side, y: 800}, {x: 300 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem, this.doneAttacking, this.scoreHandler, secondImage))
+            enemyRow.push(new Enemy(type, image, {x: side, y: 800}, {x: 300 + (rowEnemies * 50), y: yPosition}, this.graphics, this.particleSystem, this.doneAttacking, this.mediator, secondImage))
          }
          newEnemies.push(enemyRow);
       }
@@ -94,7 +97,7 @@ export default class EnemyHandler {
       if(this.enemies[indexToAttack][secondIndextToAttack] && !this.enemies[indexToAttack][secondIndextToAttack].isAttacking()){
          this.enemies[indexToAttack][secondIndextToAttack].attack(spaceshipPosition);
          const enemyInfo = this.enemies[indexToAttack][secondIndextToAttack].getEnemyInfo();
-         if(Math.random() * 10 < (3 + this.scoreHandler.getLevel()))this.fireMissile(spaceshipPosition, enemyInfo.position, enemyInfo.rotation);
+         if(Math.random() * 10 < (3 + this.level)) this.fireMissile(spaceshipPosition, enemyInfo.position, enemyInfo.rotation);
       }
    }
 
@@ -214,7 +217,8 @@ export default class EnemyHandler {
          }
          if(this.areAllEnemiesDown()){
             this.buildEnemies(5, 8)
-            this.scoreHandler.increaseLevel();
+            this.mediator.publishEvent("levelUp", []);
+            this.level++;
          }
          this.hoverEnemies(elapsedTime)
       } else {
